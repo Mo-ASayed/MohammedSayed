@@ -1,0 +1,9 @@
+A380 GLB asset
+
+Source package: angular-cesium@0.0.16
+Repository: https://github.com/TGFTech/angular-cesium
+Published asset: https://unpkg.com/angular-cesium@0.0.16/dist/assets/models/a380.glb
+Package license: MIT
+
+The model is redistributed here under the package's published MIT license metadata and was converted locally from glTF 1.0 to glTF 2.0 for Three.js compatibility.
+

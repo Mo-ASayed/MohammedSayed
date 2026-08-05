@@ -33,6 +33,9 @@ a { color: inherit; text-decoration: none; }
 button { font: inherit; }
 ::selection { background: var(--lime); color: #071b2a; }
 
+.skip-link { background: var(--ink); border-radius: 0 0 8px 0; color: var(--bg); font-size: .85rem; left: 0; padding: 12px 18px; position: fixed; top: 0; transform: translateY(-120%); transition: transform .18s ease; z-index: 100; }
+.skip-link:focus-visible { outline-offset: -4px; transform: translateY(0); }
+
 .site-header {
   align-items: center; backdrop-filter: blur(18px); background: var(--header); border-bottom: 1px solid var(--line);
   display: flex; height: 72px; justify-content: space-between; padding: 0 var(--page-pad); position: fixed; top: 0; width: 100%; z-index: 50;
@@ -67,7 +70,7 @@ button { font: inherit; }
 .kicker { align-items: center; display: flex; font-size: .76rem; gap: 10px; }
 .kicker span { background: #00a6ca; border-radius: 50%; box-shadow: 0 0 0 5px rgba(0, 166, 202, .12); height: 7px; width: 7px; }
 .hero h1 { font-size: clamp(4.4rem, 8.2vw, 8.9rem); font-weight: 520; letter-spacing: -.075em; line-height: .82; margin: 0; }
-.hero h1 em, .contact h2 em { color: var(--blue); font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: -.06em; }
+.hero h1 em, .contact h2 em, .page-heading h1 em { color: var(--blue); font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: -.06em; }
 .hero-summary { color: var(--muted); font-size: clamp(1.15rem, 1.7vw, 1.42rem); line-height: 1.55; margin: 40px 0 0; max-width: 660px; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 35px; }
 .button { align-items: center; border: 1px solid var(--line); border-radius: 999px; display: inline-flex; font-size: .94rem; font-weight: 650; gap: 9px; min-height: 52px; padding: 0 21px; transition: transform .2s ease, background .2s ease; }
@@ -77,6 +80,22 @@ button { font: inherit; }
 .button-ghost { background: color-mix(in srgb, var(--surface) 76%, transparent); backdrop-filter: blur(10px); }
 .hero-links { display: flex; gap: 24px; margin-top: 26px; }
 .hero-links a { align-items: center; color: var(--muted); display: inline-flex; font-size: .84rem; gap: 7px; }
+/* Scroll-driven flight corridor down the right-hand gutter. Replaces the old
+   WebGL aircraft layer: same aviation idea, a few kB instead of 6 MB + three.js. */
+.flight-path {
+  bottom: 0; color: var(--blue); left: 0; pointer-events: none; position: fixed; right: 0; top: 0; z-index: 2;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 88%, transparent 100%);
+}
+.flight-path > svg { display: block; height: 100%; width: 100%; }
+.flight-route { fill: none; opacity: .26; stroke: currentColor; stroke-dasharray: 1 10; stroke-linecap: round; stroke-width: 1.4; }
+.flight-trail { fill: none; opacity: .5; stroke: url(#flight-trail-fade); stroke-linecap: round; stroke-width: 1.6; }
+.flight-waypoint { fill: currentColor; fill-opacity: calc((var(--flight-progress, 0) - var(--waypoint-at)) * 60); opacity: .5; stroke: currentColor; stroke-width: 1.2; }
+.flight-marker { height: 46px; left: 0; position: absolute; top: 0; width: 46px; will-change: transform; }
+.flight-marker svg { display: block; height: 100%; overflow: visible; width: 100%; }
+.flight-marker path { fill: currentColor; opacity: .62; }
+html[data-theme="dark"] .flight-route { opacity: .3; }
+html[data-theme="dark"] .flight-trail { opacity: .6; }
+html[data-theme="dark"] .flight-marker path { opacity: .72; }
 .signal-strip { background: rgba(8, 28, 43, .96); bottom: 0; color: #eef8fa; left: 0; position: absolute; right: 0; z-index: 10; }
 .signal-inner { display: grid; grid-template-columns: repeat(4, 1fr); margin: 0 auto; max-width: var(--max); padding: 0 var(--page-pad); }
 .signal-item { border-left: 1px solid rgba(255,255,255,.16); display: grid; gap: 8px; min-height: 98px; padding: 23px 30px; }
@@ -152,8 +171,29 @@ button { font: inherit; }
 .contact h2 { font-size: clamp(3.6rem, 7vw, 7.6rem); }
 .contact h2 em { color: var(--blue); }
 .contact-copy > p { color: var(--muted); font-size: 1.15rem; line-height: 1.6; max-width: 470px; }
-.contact-link { align-items: center; border-bottom: 1px solid var(--line); color: var(--blue); display: flex; font-size: clamp(1rem, 1.7vw, 1.35rem); gap: 10px; margin-top: 35px; padding-bottom: 12px; width: fit-content; }
 .contact-copy > div { display: flex; font-family: var(--font-geist-mono), monospace; font-size: .72rem; gap: 22px; margin-top: 30px; text-transform: uppercase; }
+.contact-copy > div a { border-bottom: 1px solid var(--line); color: var(--blue); padding-bottom: 4px; }
+
+/* Contact form. No email address anywhere in the markup by design. */
+.contact-form { display: grid; gap: 18px; margin-top: 34px; max-width: 470px; }
+.contact-field { display: grid; gap: 8px; }
+.contact-field label { color: var(--muted); font-family: var(--font-geist-mono), monospace; font-size: .68rem; letter-spacing: .05em; text-transform: uppercase; }
+.contact-field input, .contact-field textarea {
+  background: color-mix(in srgb, var(--bg) 60%, transparent); border: 1px solid var(--line); border-radius: 10px;
+  color: var(--ink); font: inherit; font-size: .96rem; padding: 13px 15px; transition: border-color .2s ease; width: 100%;
+}
+.contact-field textarea { line-height: 1.55; resize: vertical; }
+.contact-field input:hover, .contact-field textarea:hover { border-color: color-mix(in srgb, var(--blue) 45%, var(--line)); }
+.contact-field input:focus-visible, .contact-field textarea:focus-visible { border-color: var(--blue); outline: 2px solid color-mix(in srgb, var(--blue) 35%, transparent); outline-offset: 1px; }
+.contact-form .button { cursor: pointer; justify-content: center; width: fit-content; }
+.contact-form .button[disabled] { cursor: progress; opacity: .65; transform: none; }
+.contact-honeypot { height: 0; left: -9999px; overflow: hidden; position: absolute; width: 0; }
+.contact-spinner { animation: contact-spin 1s linear infinite; }
+@keyframes contact-spin { to { transform: rotate(360deg); } }
+.contact-sent { align-items: center; color: var(--blue); display: flex; font-size: 1.02rem; gap: 10px; margin-top: 34px; }
+.contact-error { color: #c0392b; font-size: .9rem; margin: 0; }
+.contact-error a { border-bottom: 1px solid currentColor; }
+html[data-theme="dark"] .contact-error { color: #ff8f7d; }
 .contact-radar { align-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--blue); display: flex; height: 130px; justify-content: center; position: absolute; right: 11%; top: 12%; width: 130px; }
 
 /* Projects and CV subpages */
@@ -190,6 +230,8 @@ button { font: inherit; }
 .timeline-item ul, .cv-bullets { padding-left: 20px; }
 
 @media (max-width: 1000px) {
+  .flight-path { transform: translateX(2.5%); }
+  .flight-marker { height: 38px; width: 38px; }
   .story-grid, .experience-grid { gap: 60px; }
   .project { grid-template-columns: 40px 1fr 115px; }
   .project-icon { display: none; }
@@ -207,6 +249,9 @@ button { font: inherit; }
   .hero-shell { padding-bottom: 220px; padding-top: 98px; }
   .hero h1 { font-size: clamp(4rem, 18vw, 6.2rem); }
   .hero-summary { font-size: 1.1rem; margin-top: 28px; }
+  .flight-path { opacity: .6; transform: translateX(6%); }
+  .flight-marker { height: 26px; width: 26px; }
+  .flight-route { stroke-dasharray: 1 8; }
   .signal-inner { grid-template-columns: repeat(2, 1fr); }
   .signal-item { min-height: 88px; padding: 16px 18px; }
   .signal-item:nth-child(3) { border-top: 1px solid rgba(255,255,255,.16); }

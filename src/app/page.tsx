@@ -6,6 +6,8 @@ import {
   Linkedin,
   Plane,
 } from "lucide-react";
+import { ContactForm } from "../components/ContactForm";
+import { FlightPath } from "../components/FlightPath";
 import { experience, profile, projects, stack } from "./data";
 
 const signals = [
@@ -19,7 +21,8 @@ const interests = ["Aviation", "Aerospace systems", "Developer tooling", "Mentor
 
 export default function Home() {
   return (
-    <main className="portfolio-home">
+    <main className="portfolio-home" id="main">
+      <FlightPath />
       <section className="hero" aria-labelledby="hero-title">
         <div className="hero-stage">
           <div className="hero-grid" aria-hidden="true" />
@@ -159,8 +162,16 @@ export default function Home() {
         <div className="section-shell contact-grid">
           <div><p className="section-label">05 / Contact</p><h2>Let&apos;s build something<br /><em>that holds.</em></h2></div>
           <div className="contact-copy">
-            <p>For senior DevOps, platform engineering and cloud infrastructure opportunities.</p>
-            <div><a href={profile.linkedin}>LinkedIn</a><a href={profile.github}>GitHub</a><a href={profile.medium}>Tech blog</a></div>
+            <p>
+              For senior DevOps, platform engineering and cloud infrastructure opportunities.
+              Send a note and I&apos;ll come back to you directly.
+            </p>
+            <ContactForm />
+            <div>
+              <a href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+              <a href={profile.github} target="_blank" rel="noreferrer">GitHub</a>
+              <a href={profile.medium} target="_blank" rel="noreferrer">Tech blog</a>
+            </div>
           </div>
         </div>
       </section>

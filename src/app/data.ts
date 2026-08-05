@@ -11,6 +11,10 @@ import {
   Workflow
 } from "lucide-react";
 
+// No email address, phone number or CV file lives in this repo. Everything here
+// ships to the browser in plain HTML, so personal contact details would be
+// scraped within days. Enquiries go through the contact form instead, which
+// posts to a third-party endpoint that holds the destination address.
 export const profile = {
   name: "Mohammed Sayed",
   shortName: "Mo",
@@ -210,5 +214,5 @@ export const education = [
 export const links = [
   { label: "GitHub", href: profile.github, icon: Github },
   { label: "LinkedIn", href: profile.linkedin, icon: Linkedin },
-  { label: "Medium", href: profile.medium, icon: Code2 }
+  { label: "Tech blog", href: profile.medium, icon: Code2 }
 ];

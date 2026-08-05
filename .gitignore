@@ -6,3 +6,10 @@ out/
 .env*
 !.env.example
 *.tsbuildinfo
+
+# Local-only scratch: review screenshots, retired assets, dead components.
+# Safe to delete once you are happy with the current design.
+.local-archive/
+
+# Dev review screenshots must never land in the repo root again.
+/*.png

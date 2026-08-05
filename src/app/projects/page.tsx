@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <main className="subpage">
+    <main className="subpage" id="main">
       <section className="page-heading">
         <p className="eyebrow">Projects</p>
         <h1>Infrastructure, platform, and cloud delivery work.</h1>

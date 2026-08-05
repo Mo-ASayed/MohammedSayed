@@ -4,87 +4,6 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-const FLOW_VERTEX_SHADER = `
-uniform float uTime;
-varying vec2 vUv;
-void main() {
-  vUv = uv;
-  vec3 transformed = position;
-  float edge = sin(3.14159265 * uv.y);
-  float wave = sin(uv.x * 15.0 + uTime * 1.65 + uv.y * 3.2);
-  transformed.y += wave * 0.075 * edge;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
-}`;
-
-const FLOW_FRAGMENT_SHADER = `
-uniform float uTime;
-uniform float uSide;
-varying vec2 vUv;
-void main() {
-  float across = sin(3.14159265 * vUv.y);
-  float ends = smoothstep(0.0, 0.13, vUv.x) * smoothstep(1.0, 0.84, vUv.x);
-  float pulse = 0.5 + 0.5 * sin(vUv.x * 18.0 + uTime * 2.0 + vUv.y * 2.8);
-  float softBand = 0.5 + 0.5 * sin(vUv.y * 8.0 + uTime * 0.35);
-  vec3 sky = vec3(0.20, 0.76, 0.95);
-  vec3 blue = vec3(0.22, 0.42, 0.92);
-  vec3 teal = vec3(0.20, 0.82, 0.72);
-  vec3 color = mix(sky, blue, vUv.y * 0.72 + pulse * 0.12);
-  color = mix(color, teal, softBand * 0.16 + uSide * 0.025);
-  float alpha = across * ends * (0.045 + pulse * 0.105);
-  gl_FragColor = vec4(color, alpha);
-}`;
-
-function createAirflowSheet(side: -1 | 1) {
-  const alongSegments = 82;
-  const acrossSegments = 20;
-  const positions: number[] = [];
-  const uvs: number[] = [];
-  const indices: number[] = [];
-
-  for (let row = 0; row <= acrossSegments; row += 1) {
-    const v = row / acrossSegments;
-    const span = .42 + v * 4.25;
-    const z = side * span;
-    const wingCenter = .88 - span * .53;
-    for (let column = 0; column <= alongSegments; column += 1) {
-      const u = column / alongSegments;
-      const x = 5.8 - u * 11.6;
-      const wingLift = Math.exp(-Math.pow((x - wingCenter) / 1.7, 2)) * (.2 + v * .22);
-      positions.push(x, .13 + wingLift, z);
-      uvs.push(u, v);
-    }
-  }
-
-  const rowWidth = alongSegments + 1;
-  for (let row = 0; row < acrossSegments; row += 1) {
-    for (let column = 0; column < alongSegments; column += 1) {
-      const a = row * rowWidth + column;
-      const b = a + 1;
-      const c = a + rowWidth;
-      const d = c + 1;
-      indices.push(a, c, b, b, c, d);
-    }
-  }
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
-  geometry.setIndex(indices);
-  geometry.computeVertexNormals();
-
-  const material = new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0 }, uSide: { value: side } },
-    vertexShader: FLOW_VERTEX_SHADER,
-    fragmentShader: FLOW_FRAGMENT_SHADER,
-    transparent: true,
-    depthWrite: false,
-    side: THREE.DoubleSide,
-    blending: THREE.AdditiveBlending
-  });
-
-  return new THREE.Mesh(geometry, material);
-}
-
 function orientAndNormalize(model: THREE.Object3D) {
   const oriented = new THREE.Group();
   oriented.add(model);
@@ -163,12 +82,6 @@ export function A380Scene() {
     aircraft.rotation.set(.045, Math.PI - .34, -.025);
     scene.add(aircraft);
 
-    const airflow = new THREE.Group();
-    const sheets = [createAirflowSheet(-1), createAirflowSheet(1)];
-    sheets.forEach((sheet) => airflow.add(sheet));
-    airflow.rotation.copy(aircraft.rotation);
-    scene.add(airflow);
-
     let loadedModel: THREE.Object3D | null = null;
     const loader = new GLTFLoader();
     loader.load(
@@ -183,7 +96,6 @@ export function A380Scene() {
       () => { mount.dataset.modelLoaded = "error"; }
     );
 
-    const pointer = { x: 0, y: 0 };
     const flightSection = mount.closest("[data-flight-section]") as HTMLElement | null;
     const flightStage = mount.closest(".hero-stage") as HTMLElement | null;
     const aircraftWrap = mount.parentElement;
@@ -198,16 +110,9 @@ export function A380Scene() {
       const travel = Math.max(flightSection.offsetHeight - window.innerHeight, 1);
       targetFlightProgress = THREE.MathUtils.clamp(-rect.top / travel, 0, 1);
       flightStage?.style.setProperty("--flight-progress", targetFlightProgress.toFixed(3));
-      mount.dataset.flightPhase = targetFlightProgress < .16 ? "runway" : targetFlightProgress < .7 ? "takeoff" : "climb";
+      mount.dataset.flightPhase = targetFlightProgress < .25 ? "entering" : targetFlightProgress < .75 ? "crossing" : "departing";
     };
 
-    const pointerMove = (event: PointerEvent) => {
-      if (prefersReducedMotion) return;
-      const rect = mount.getBoundingClientRect();
-      pointer.x = (event.clientX - rect.left) / Math.max(rect.width, 1) - .5;
-      pointer.y = (event.clientY - rect.top) / Math.max(rect.height, 1) - .5;
-    };
-    mount.addEventListener("pointermove", pointerMove);
     window.addEventListener("scroll", updateFlightProgress, { passive: true });
     updateFlightProgress();
 
@@ -228,42 +133,32 @@ export function A380Scene() {
     visibilityObserver.observe(mount);
     const clockStart = performance.now();
     let frame = 0;
-    let lastRender = 0;
+    let lastFrame = clockStart;
     const render = () => {
       frame = requestAnimationFrame(render);
       if (!visible) return;
-      const elapsed = (performance.now() - clockStart) / 1000;
-      if (elapsed - lastRender < 1 / 30) return;
-      lastRender = elapsed;
+      const now = performance.now();
+      const elapsed = (now - clockStart) / 1000;
+      const delta = Math.min((now - lastFrame) / 1000, .1);
+      lastFrame = now;
 
-      flightProgress += (targetFlightProgress - flightProgress) * .065;
+      const follow = 1 - Math.exp(-delta * 8);
+      flightProgress += (targetFlightProgress - flightProgress) * follow;
       const easedFlight = THREE.MathUtils.smoothstep(flightProgress, 0, 1);
-      const targetY = Math.PI - .34 + pointer.x * .18 - easedFlight * .1;
-      const targetX = .045 - pointer.y * .09 + easedFlight * .115;
+      const arc = Math.sin(easedFlight * Math.PI);
+      const targetY = Math.PI - .34 - easedFlight * .06;
+      const targetX = .045 + arc * .065;
       aircraft.rotation.y += (targetY - aircraft.rotation.y) * .04;
       aircraft.rotation.x += (targetX - aircraft.rotation.x) * .04;
-      aircraft.rotation.z += ((-.025 - easedFlight * .105) - aircraft.rotation.z) * .035;
-      aircraft.position.x = -1.05 + easedFlight * 1.7;
-      const idleLift = prefersReducedMotion ? 0 : Math.sin(elapsed * .58) * (.025 + easedFlight * .04);
-      aircraft.position.y = -.62 + easedFlight * 1.5 + idleLift;
-      airflow.rotation.y += (targetY - airflow.rotation.y) * .04;
-      airflow.rotation.x += (targetX - airflow.rotation.x) * .04;
-      airflow.rotation.z = aircraft.rotation.z;
-      airflow.position.x = aircraft.position.x;
-      airflow.position.y = aircraft.position.y;
-      airflow.visible = flightProgress > .13 && !compactLayout;
-      sheets.forEach((sheet) => {
-        const material = sheet.material as THREE.ShaderMaterial;
-        material.uniforms.uTime.value = prefersReducedMotion ? 0 : elapsed;
-      });
-      camera.position.x += ((10.7 + pointer.x * .46) - camera.position.x) * .03;
-      camera.position.y += ((3.4 - pointer.y * .3) - camera.position.y) * .03;
-      camera.position.z += ((13.7 - easedFlight * 1.15) - camera.position.z) * .025;
+      aircraft.rotation.z += ((-.02 - arc * .055) - aircraft.rotation.z) * .035;
+      aircraft.position.x = -.2;
+      aircraft.position.y = -.05 + arc * .16;
+      camera.position.z += ((13.5 - arc * .35) - camera.position.z) * .025;
       camera.lookAt(-.05, -.05, 0);
 
-      const travelX = easedFlight * (compactLayout ? 5 : 10);
-      const travelY = (compactLayout ? -38 : 34) - easedFlight * (compactLayout ? 92 : 155);
-      const scale = (compactLayout ? .58 : .86) + easedFlight * (compactLayout ? .2 : .18);
+      const travelX = (compactLayout ? -62 : -55) + easedFlight * (compactLayout ? 124 : 110);
+      const travelY = (compactLayout ? 96 : 70) - arc * (compactLayout ? 46 : 68) - easedFlight * (compactLayout ? 12 : 18);
+      const scale = (compactLayout ? .5 : .58) + arc * (compactLayout ? .05 : .06);
       if (aircraftWrap) aircraftWrap.style.transform = `translate3d(${travelX}vw, ${travelY}px, 0) scale(${scale})`;
       renderer.render(scene, camera);
     };
@@ -271,7 +166,6 @@ export function A380Scene() {
 
     return () => {
       cancelAnimationFrame(frame);
-      mount.removeEventListener("pointermove", pointerMove);
       window.removeEventListener("scroll", updateFlightProgress);
       flightStage?.style.removeProperty("--flight-progress");
       resizeObserver.disconnect();
@@ -288,5 +182,5 @@ export function A380Scene() {
     };
   }, []);
 
-  return <div ref={mountRef} className="a380-scene" aria-label="Interactive smooth A380 aircraft with animated translucent airflow over its wings" role="img" />;
+  return <div ref={mountRef} className="a380-scene" aria-label="A380 aircraft moving smoothly across the background as the page scrolls" role="img" />;
 }

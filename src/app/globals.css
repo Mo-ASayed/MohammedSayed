@@ -82,15 +82,10 @@ html[data-theme="dark"] .button-ghost { background: rgba(255,255,255,.08); borde
 .hero-links { display: flex; gap: 24px; margin-top: 26px; }
 .hero-links a { align-items: center; color: #3d5664; display: inline-flex; font-size: .84rem; gap: 7px; }
 html[data-theme="dark"] .hero-links a { color: #abc0c9; }
-.aircraft-wrap { bottom: 105px; left: 43%; opacity: .92; pointer-events: none; position: absolute; right: -8%; top: 90px; transform-origin: 60% 65%; will-change: transform; z-index: 2; }
+.aircraft-wrap { bottom: 105px; left: -18%; mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); opacity: .24; pointer-events: none; position: absolute; right: -18%; top: 72px; transform-origin: center; will-change: transform; z-index: 2; }
+html[data-theme="dark"] .aircraft-wrap { filter: brightness(1.65); opacity: .28; }
 .a380-scene { height: 100%; position: absolute; width: 100%; }
 .a380-scene canvas { display: block; height: 100%; width: 100%; }
-.aircraft-caption { bottom: 130px; display: flex; flex-direction: column; font-family: var(--font-geist-mono), monospace; font-size: .61rem; gap: 8px; letter-spacing: .08em; opacity: calc(.68 - var(--flight-progress) * .58); position: absolute; right: var(--page-pad); text-align: right; text-transform: uppercase; }
-.aircraft-caption span:first-child { align-items: center; display: flex; gap: 7px; justify-content: end; }
-.runway { background: linear-gradient(90deg, transparent 49.65%, rgba(255,255,255,.82) 49.65% 50.35%, transparent 50.35%), linear-gradient(#68747a, #384950); bottom: 90px; clip-path: polygon(47% 0, 53% 0, 94% 100%, 6% 100%); height: 34%; left: 48%; opacity: calc(.72 - var(--flight-progress) * .95); pointer-events: none; position: absolute; transform: perspective(700px) rotateX(8deg); transform-origin: bottom; width: 55%; z-index: 1; }
-.runway::before, .runway::after { background: repeating-linear-gradient(90deg, #f5f5ed 0 7%, transparent 7% 12%); bottom: 8%; content: ""; height: 5%; left: 16%; position: absolute; right: 16%; }
-.runway::after { bottom: auto; top: 16%; }
-.runway-centreline { background: repeating-linear-gradient(180deg, #fff 0 10%, transparent 10% 22%); height: 78%; left: calc(50% - 3px); position: absolute; top: 8%; width: 6px; }
 .signal-strip { background: rgba(8, 28, 43, .96); bottom: 0; color: #eef8fa; left: 0; position: absolute; right: 0; z-index: 10; }
 .signal-inner { display: grid; grid-template-columns: repeat(4, 1fr); margin: 0 auto; max-width: var(--max); padding: 0 var(--page-pad); }
 .signal-item { border-left: 1px solid rgba(255,255,255,.16); display: grid; gap: 8px; min-height: 98px; padding: 23px 30px; }
@@ -205,7 +200,8 @@ html[data-theme="dark"] .experience-section { background: #e7f3f5; color: #071b2
 .timeline-item ul, .cv-bullets { padding-left: 20px; }
 
 @media (max-width: 1000px) {
-  .aircraft-wrap { left: 50%; opacity: .55; right: -20%; }
+  .aircraft-wrap { left: -24%; opacity: .2; right: -24%; }
+  html[data-theme="dark"] .aircraft-wrap { opacity: .23; }
   .story-grid, .experience-grid { gap: 60px; }
   .project { grid-template-columns: 40px 1fr 115px; }
   .project-icon { display: none; }
@@ -223,9 +219,8 @@ html[data-theme="dark"] .experience-section { background: #e7f3f5; color: #071b2
   .hero-shell { padding-bottom: 220px; padding-top: 98px; }
   .hero h1 { font-size: clamp(4rem, 18vw, 6.2rem); }
   .hero-summary { font-size: 1.1rem; margin-top: 28px; }
-  .aircraft-wrap { bottom: 185px; left: 38%; mask-image: linear-gradient(90deg, transparent 0, rgba(0,0,0,.18) 28%, #000 58%); opacity: .32; right: -42%; top: 155px; }
-  .runway { bottom: 190px; height: 25%; left: 32%; opacity: calc(.42 - var(--flight-progress) * .7); width: 88%; }
-  .aircraft-caption { display: none; }
+  .aircraft-wrap { bottom: 185px; left: -42%; mask-image: linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%); opacity: .15; right: -42%; top: 120px; }
+  html[data-theme="dark"] .aircraft-wrap { opacity: .18; }
   .signal-inner { grid-template-columns: repeat(2, 1fr); }
   .signal-item { min-height: 88px; padding: 16px 18px; }
   .signal-item:nth-child(3) { border-top: 1px solid rgba(255,255,255,.16); }
@@ -266,7 +261,6 @@ html[data-theme="dark"] .experience-section { background: #e7f3f5; color: #071b2
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
   .hero { height: 100svh; min-height: 780px; }
   .hero-stage { position: relative; }
-  .runway { opacity: .18; }
 }
 
 @media print {

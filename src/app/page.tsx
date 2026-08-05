@@ -8,7 +8,6 @@ import {
   Linkedin,
   Mail,
   Plane,
-  PlaneTakeoff,
 } from "lucide-react";
 import { A380Scene } from "../components/A380Scene";
 import { experience, profile, projects, stack } from "./data";
@@ -28,10 +27,6 @@ export default function Home() {
       <section className="hero" aria-labelledby="hero-title" data-flight-section>
         <div className="hero-stage">
           <div className="hero-grid" aria-hidden="true" />
-          <div className="runway" aria-hidden="true">
-            <span className="runway-threshold" />
-            <span className="runway-centreline" />
-          </div>
           <div className="aircraft-wrap"><A380Scene /></div>
 
           <div className="hero-shell">
@@ -52,10 +47,6 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="aircraft-caption" aria-hidden="true">
-              <span><PlaneTakeoff size={14} /> A380 / scroll to depart</span>
-              <span>Runway 09 → next system</span>
-            </div>
           </div>
 
           <div className="signal-strip">

@@ -96,8 +96,6 @@ export function A380Scene() {
       () => { mount.dataset.modelLoaded = "error"; }
     );
 
-    const flightSection = mount.closest("[data-flight-section]") as HTMLElement | null;
-    const flightStage = mount.closest(".hero-stage") as HTMLElement | null;
     const aircraftWrap = mount.parentElement;
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let compactLayout = window.innerWidth < 760;
@@ -105,11 +103,10 @@ export function A380Scene() {
     let flightProgress = targetFlightProgress;
 
     const updateFlightProgress = () => {
-      if (!flightSection || prefersReducedMotion) return;
-      const rect = flightSection.getBoundingClientRect();
-      const travel = Math.max(flightSection.offsetHeight - window.innerHeight, 1);
-      targetFlightProgress = THREE.MathUtils.clamp(-rect.top / travel, 0, 1);
-      flightStage?.style.setProperty("--flight-progress", targetFlightProgress.toFixed(3));
+      if (prefersReducedMotion) return;
+      const travel = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      targetFlightProgress = THREE.MathUtils.clamp(window.scrollY / travel, 0, 1);
+      mount.dataset.flightProgress = targetFlightProgress.toFixed(3);
       mount.dataset.flightPhase = targetFlightProgress < .25 ? "entering" : targetFlightProgress < .75 ? "crossing" : "departing";
     };
 
@@ -145,20 +142,21 @@ export function A380Scene() {
       const follow = 1 - Math.exp(-delta * 8);
       flightProgress += (targetFlightProgress - flightProgress) * follow;
       const easedFlight = THREE.MathUtils.smoothstep(flightProgress, 0, 1);
-      const arc = Math.sin(easedFlight * Math.PI);
-      const targetY = Math.PI - .34 - easedFlight * .06;
-      const targetX = .045 + arc * .065;
+      const wave = Math.sin(easedFlight * Math.PI * 2);
+      const targetY = Math.PI - .34 - easedFlight * .07;
+      const targetX = .045 + wave * .035;
       aircraft.rotation.y += (targetY - aircraft.rotation.y) * .04;
       aircraft.rotation.x += (targetX - aircraft.rotation.x) * .04;
-      aircraft.rotation.z += ((-.02 - arc * .055) - aircraft.rotation.z) * .035;
+      aircraft.rotation.z += ((-.02 - wave * .04) - aircraft.rotation.z) * .035;
       aircraft.position.x = -.2;
-      aircraft.position.y = -.05 + arc * .16;
-      camera.position.z += ((13.5 - arc * .35) - camera.position.z) * .025;
+      aircraft.position.y = -.05;
+      camera.position.z += (13.4 - camera.position.z) * .025;
       camera.lookAt(-.05, -.05, 0);
 
       const travelX = (compactLayout ? -62 : -55) + easedFlight * (compactLayout ? 124 : 110);
-      const travelY = (compactLayout ? 96 : 70) - arc * (compactLayout ? 46 : 68) - easedFlight * (compactLayout ? 12 : 18);
-      const scale = (compactLayout ? .5 : .58) + arc * (compactLayout ? .05 : .06);
+      const verticalRange = window.innerHeight * (compactLayout ? .58 : .62);
+      const travelY = (easedFlight - .5) * verticalRange - wave * (compactLayout ? 18 : 28);
+      const scale = compactLayout ? .42 : .58;
       if (aircraftWrap) aircraftWrap.style.transform = `translate3d(${travelX}vw, ${travelY}px, 0) scale(${scale})`;
       renderer.render(scene, camera);
     };
@@ -167,7 +165,6 @@ export function A380Scene() {
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", updateFlightProgress);
-      flightStage?.style.removeProperty("--flight-progress");
       resizeObserver.disconnect();
       visibilityObserver.disconnect();
       scene.traverse((object) => {

@@ -24,10 +24,10 @@ const interests = ["Aviation", "Aerospace systems", "Developer tooling", "Mentor
 export default function Home() {
   return (
     <main className="portfolio-home">
-      <section className="hero" aria-labelledby="hero-title" data-flight-section>
+      <div className="aircraft-flight-layer"><A380Scene /></div>
+      <section className="hero" aria-labelledby="hero-title">
         <div className="hero-stage">
           <div className="hero-grid" aria-hidden="true" />
-          <div className="aircraft-wrap"><A380Scene /></div>
 
           <div className="hero-shell">
             <div className="hero-copy">

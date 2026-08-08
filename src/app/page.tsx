@@ -45,6 +45,12 @@ export default function Home() {
               </div>
             </div>
 
+            <div className="hero-flight-status" aria-hidden="true">
+              <span>Flight plan / 01</span>
+              <strong>LHR → RELIABLE SYSTEMS</strong>
+              <div><span>Cloud</span><span>Platform</span><span>Scroll ↓</span></div>
+            </div>
+
           </div>
 
           <div className="signal-strip">
@@ -98,7 +104,7 @@ export default function Home() {
             {projects.map((project, index) => {
               const Icon = project.icon;
               return (
-                <article className="project" key={project.title}>
+                <article className={`project${index < 2 ? " project-featured" : ""}`} key={project.title}>
                   <div className="project-index">0{index + 1}</div>
                   <div className="project-icon"><Icon size={28} strokeWidth={1.6} aria-hidden="true" /></div>
                   <div className="project-body">
@@ -120,7 +126,7 @@ export default function Home() {
             })}
           </div>
           <a className="all-work" href={profile.github} target="_blank" rel="noreferrer">
-            Explore all 17 public repositories <ArrowRight size={17} />
+            Explore public repositories <ArrowRight size={17} />
           </a>
         </div>
       </section>

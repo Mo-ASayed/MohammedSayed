@@ -179,7 +179,7 @@ export const experience = [
     company: "CoderCo",
     period: "01/2024 – 05/2026",
     points: [
-      "Enabled 3,000+ students to build practical DevOps skills across Linux, Docker, Kubernetes, Terraform and CI/CD.",
+      "Supported 1,000+ engineers building practical DevOps skills across Linux, Docker, Kubernetes, Terraform and CI/CD.",
       "Developed and led 50+ hands-on labs covering Docker, Kubernetes, Terraform, GitHub Actions, ArgoCD and Helm.",
       "Mentored junior engineers weekly, supporting practical project work and career progression."
     ]

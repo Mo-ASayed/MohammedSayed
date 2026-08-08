@@ -72,6 +72,7 @@ export function FlightPath() {
 
       marker.style.transform = `translate3d(${at.x * scaleX}px, ${at.y * scaleY}px, 0) translate(-50%, -50%) rotate(${angle}deg)`;
       wrap.style.setProperty("--flight-progress", progress.toFixed(4));
+      document.documentElement.style.setProperty("--page-progress", progress.toFixed(4));
       wrap.dataset.flightProgress = progress.toFixed(3);
     };
 
@@ -86,7 +87,10 @@ export function FlightPath() {
         apply(0.55);
       });
       still.observe(document.documentElement);
-      return () => still.disconnect();
+      return () => {
+        still.disconnect();
+        document.documentElement.style.removeProperty("--page-progress");
+      };
     }
 
     let target = Math.min(Math.max(window.scrollY / travel, 0), 1);
@@ -138,6 +142,7 @@ export function FlightPath() {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
       observer.disconnect();
+      document.documentElement.style.removeProperty("--page-progress");
     };
   }, []);
 

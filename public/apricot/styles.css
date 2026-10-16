@@ -20,3 +20,27 @@
 @media(max-width:900px){.next-session{gap:20px;padding:23px}.session-review{padding-left:20px}.review-start{flex-wrap:wrap}.learning-evidence{gap:15px}.review-card{padding:27px}}
 @media(max-width:650px){.sidebar nav{flex-wrap:wrap}.sidebar nav .nav-item{width:calc(50% - 3px);justify-content:flex-start;padding:9px 12px}.next-session{grid-template-columns:1fr;padding:22px;gap:20px}.session-review{border-left:0;border-top:1px solid #d9cebb;padding:20px 0 0}.learning-evidence{grid-template-columns:1fr;gap:17px;padding:10px 0 25px}.review-intro h1{font-size:35px}.review-stats{gap:8px}.review-stats>div{padding:15px 11px}.review-stats strong{font-size:28px}.review-stats span{font-size:9px}.review-start{padding:21px}.review-topics strong{font-size:12px}.review-topics button{font-size:10px}.review-topics>div{gap:11px}.review-topics small{font-size:10px}.review-card{padding:23px 18px}.review-card h2{font-size:26px}.rating-buttons{gap:7px}.rating-buttons button{padding:13px 9px}.rating-buttons small{font-size:9px}.review-finish{padding:25px}.review-finish h1{font-size:33px}.review-finish .secondary{margin:12px 0 0}.review-finish-counts{gap:24px}}
 @media(max-width:650px){.hero-visual{max-width:none;width:100%;padding:25px 0 8px}.reading-note{padding:22px;transform:none}.reading-note h2{font-size:27px}.hero h1{font-size:39px}.hero-note{display:block;margin-left:0;font-size:11px}.hero-copy>p{font-size:14px}.mission-card h3{font-size:18px}.mission-card p{font-size:11px}.card-foot{font-size:8px}.sidebar nav .nav-item{font-size:10px}}
+
+/* Comfortable reading and controls without losing the paper-and-apricot palette. */
+:root { --muted: #696157; }
+.sidebar { overflow-y: auto; overscroll-behavior: contain; }
+.sidebar-bottom { flex-shrink: 0; padding-bottom: 8px; }
+.primary { background: #995232; min-height: 44px; font-size: 13px; }
+.primary:hover { background: #804229; }
+.secondary, .text-button { min-height: 44px; }
+.mission-card p { font-size: 13px; color: #6c6255; line-height: 1.75; }
+.card-state, .card-foot { font-size: 11px; color: #746553; }
+.hero-note, .path-meta small { font-size: 12px; color: #706658; }
+.review-topics small, .review-method, .rating-buttons small { color: #726047 !important; }
+.review-card { box-shadow: 0 8px 30px #4f382008; }
+.review-card .eyebrow { font-size: 11px; color: #80613b; }
+.rating-buttons button { min-height: 72px; }
+.mini-lessons button { min-height: 36px; font-size: 12px; }
+@media (max-width: 650px) {
+  .sidebar { overflow: visible; }
+  .sidebar nav .nav-item { min-height: 44px; font-size: 12px; }
+  .mission-card p { font-size: 13px; }
+  .card-foot { font-size: 11px; }
+  .rating-buttons small { font-size: 11px; }
+  .review-topics button { font-size: 12px; white-space: normal; }
+}

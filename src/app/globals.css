@@ -413,3 +413,10 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); ou
 html[data-theme="dark"] .apricot-feature { --apricot-ink: #f2d4b5; --apricot-muted: #c8b49d; --apricot-rule: #574636; background: #29231e; }
 html[data-theme="dark"] .apricot-link { background: #e5b48b; color: #302318; }
 html[data-theme="dark"] .apricot-link:hover { background: #f2c9a5; }
+
+/* Native controls follow the selected theme, including explicit overrides. */
+html[data-theme="light"] { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+.theme-toggle { transition: background .2s ease, border-color .2s ease; }
+.theme-toggle:hover { background: color-mix(in srgb, var(--blue) 10%, var(--surface)); }
+html[data-theme="dark"] .button-primary:hover { color: #071b2a; }

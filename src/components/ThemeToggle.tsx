@@ -21,8 +21,12 @@ export function ThemeToggle() {
   const toggleTheme = () => {
     const next = theme === "light" ? "dark" : "light";
     document.documentElement.dataset.theme = next;
-    window.localStorage.setItem("portfolio-theme", next);
     setTheme(next);
+    try {
+      window.localStorage.setItem("portfolio-theme", next);
+    } catch {
+      // The current-page preference still works when browser storage is blocked.
+    }
   };
 
   return (

@@ -4,7 +4,8 @@ import { projects } from "../data";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "Selected projects by Mohammed Sayed across DevOps, Kubernetes, AWS, and platform engineering."
+  description: "Selected projects by Mohammed Sayed across DevOps, Kubernetes, AWS, and platform engineering.",
+  alternates: { canonical: "https://mohammedsayed.com/projects" }
 };
 
 export default function ProjectsPage() {
@@ -12,10 +13,10 @@ export default function ProjectsPage() {
     <main className="subpage" id="main">
       <section className="page-heading">
         <p className="eyebrow">Projects</p>
-        <h1>Infrastructure, platform, and cloud delivery work.</h1>
+        <h1>From architecture<br />to working systems.</h1>
         <p>
-          A curated view of public repositories and lab work. The main portfolio stays on
-          Vercel; AWS demos can live independently under lab.mohammedsayed.com.
+          Open source tools and hands-on platform projects. Explore the code, the
+          engineering decisions and the systems behind them.
         </p>
       </section>
 
@@ -30,13 +31,14 @@ export default function ProjectsPage() {
               </div>
               <h2>{project.title}</h2>
               <p>{project.description}</p>
+              <p className="project-card-proof">{project.proof}</p>
               <div className="tag-row">
                 {project.tags.map((tag) => (
                   <span key={tag}>{tag}</span>
                 ))}
               </div>
-              <a className="text-link" href={project.href}>
-                Open project <ExternalLink size={17} aria-hidden="true" />
+              <a className="text-link" href={project.href} target="_blank" rel="noreferrer" aria-label={`View ${project.title} on GitHub (opens in a new tab)`}>
+                View repository <ExternalLink size={17} aria-hidden="true" />
               </a>
             </article>
           );

@@ -373,3 +373,18 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); ou
   .experience-heading { position: static; }
   .story-copy { padding-top: 0; }
 }
+
+/* Give project evidence and actions a clear, consistent hierarchy. */
+.project { border-radius: 12px; }
+.project:hover { transform: none; }
+.project-links a { min-height: 44px; }
+.project-proof { border-left: 2px solid var(--blue); padding-left: 14px; font-weight: 500; }
+.project-tags span, .tag-row span { font-size: .72rem; background: var(--surface); }
+.project-grid { border-top: 0; gap: 24px; }
+.project-card, .project-card:nth-child(odd) { border: 1px solid var(--line); border-radius: 16px; padding: clamp(24px, 3vw, 40px); background: var(--bg); display: flex; flex-direction: column; }
+.project-card h2 { margin-top: 36px; font-size: clamp(1.9rem, 3vw, 2.7rem); line-height: 1.1; }
+.project-card .project-card-proof { font-size: .9rem; color: var(--ink); border-left: 2px solid var(--blue); padding-left: 14px; }
+.project-card .text-link { margin-top: auto; min-height: 44px; }
+.project-card:focus-within { border-color: var(--blue); }
+.all-work { float: none; margin-top: 32px; min-height: 44px; }
+@media (max-width: 760px) { .project-links { display: flex; flex-wrap: wrap; gap: 20px; padding-top: 0; } }

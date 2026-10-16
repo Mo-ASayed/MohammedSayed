@@ -114,8 +114,8 @@ export default function Home() {
               );
             })}
           </div>
-          <a className="all-work" href={profile.github} target="_blank" rel="noreferrer">
-            Explore public repositories <ArrowRight size={17} />
+          <a className="all-work" href="/projects">
+            Explore all projects <ArrowRight size={17} />
           </a>
         </div>
       </section>

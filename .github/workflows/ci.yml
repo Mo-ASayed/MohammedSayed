@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'improvements/**']
   pull_request:
 
 permissions:
@@ -35,3 +35,29 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Workshop unit checks
+        run: npm run test:apricot
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Check responsive layouts and learning flows
+        run: |
+          npm start -- --port 4180 > /tmp/portfolio-server.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4180 > /dev/null; then break; fi
+            sleep 1
+          done
+          node tests/site-polish.mjs
+          node tests/apricot-integration.mjs
+          npm run test:apricot:browser
+          node tests/apricot/review-browser.mjs
+
+      - name: Save browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-evidence
+          path: test-results/
+          retention-days: 7

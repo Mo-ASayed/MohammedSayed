@@ -153,11 +153,12 @@ export default function Home() {
                 <div className="experience-details">
                   <h3>{item.role}</h3>
                   <p>{item.company}</p>
+                  <p className="experience-outcome">{item.points[0]}</p>
                   <div className="experience-tools" aria-label={`Tools used at ${item.company}`}>
                     {item.tools.map((tool) => <span key={tool}>{tool}</span>)}
                   </div>
                 </div>
-                <time>{item.period.replace("01/", "").replace("02/", "")}</time>
+                <span className="experience-period">{item.period.replace(/\b(?:01|02)\//g, "")}</span>
               </article>
             ))}
           </div>

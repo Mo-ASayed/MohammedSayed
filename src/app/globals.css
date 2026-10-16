@@ -388,3 +388,13 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); ou
 .project-card:focus-within { border-color: var(--blue); }
 .all-work { float: none; margin-top: 32px; min-height: 44px; }
 @media (max-width: 760px) { .project-links { display: flex; flex-wrap: wrap; gap: 20px; padding-top: 0; } }
+
+/* A readable career timeline, with one concrete outcome per role. */
+.experience-item { align-items: start; grid-template-columns: 28px minmax(0, 1fr); position: relative; padding: 30px 0 34px; }
+.experience-number { margin-top: 7px; border: 1px solid var(--line); border-radius: 50%; width: 28px; height: 28px; display: grid; place-items: center; }
+.experience-item:hover { padding-inline: 0; }
+.experience-period { grid-column: 2; color: var(--muted); font-family: var(--font-geist-mono), monospace; font-size: .75rem; }
+.experience-details .experience-outcome { color: var(--muted); font-size: .97rem; line-height: 1.7; margin-top: 18px; max-width: 60ch; }
+.experience-tools span { font-size: .7rem; color: var(--muted); }
+.experience-item h3 { line-height: 1.2; }
+.experience-heading { align-self: start; }

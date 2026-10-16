@@ -358,3 +358,18 @@ html { scroll-padding-top: 96px; }
   .signal-item { padding: 18px 12px; }
   .signal-item span { font-size: .65rem; line-height: 1.6; }
 }
+
+/* Editorial rhythm and resilient intermediate-width layouts. */
+.section { padding-block: clamp(72px, 8vw, 122px); }
+.section h2 { font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 1.04; text-wrap: balance; }
+.story-grid, .experience-grid, .contact-grid, .section-intro { gap: clamp(28px, 5vw, 72px); }
+.story-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+.story-copy, .project-body, .experience-details, .contact-copy { min-width: 0; }
+.story-lead { max-width: 60ch; }
+.page-heading h1 { font-size: clamp(2.8rem, 6vw, 6rem); line-height: 1.04; text-wrap: balance; }
+button:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+@media (max-width: 900px) {
+  .story-grid, .experience-grid, .contact-grid { grid-template-columns: minmax(0, 1fr); }
+  .experience-heading { position: static; }
+  .story-copy { padding-top: 0; }
+}

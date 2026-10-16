@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from "react";
  */
 
 const ROUTE =
-  "M 906 -80 C 882 130 930 300 906 470 C 888 620 932 790 904 1080";
+  "M 906 88 C 882 230 930 350 906 500 C 888 620 932 720 904 820";
 
 /** Path coordinates live in this square space and are stretched to the viewport. */
 const VIEW = 1000;

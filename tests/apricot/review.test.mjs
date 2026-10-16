@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {lessons} from '../../public/apricot/content.js';
+import {reviewCards,cleanReview,scheduleReview,dueCards,eligibleCards,reviewStats,escapeHTML} from '../../public/apricot/review.js';
+const cards=reviewCards(lessons),now=1000000000;
+test('reviews cover each topic with recall and calculation prompts',()=>{assert.equal(cards.length,24);assert.equal(new Set(cards.map(c=>c.id)).size,24);for(let i=0;i<6;i++)assert.equal(cards.filter(c=>c.lesson===i).length,4);});
+test('scheduling moves understood concepts out and brings gaps back sooner',()=>{assert.equal(scheduleReview(null,'again',now).due,now+600000);assert.equal(scheduleReview(null,'hard',now).due,now+86400000);const first=scheduleReview(null,'good',now);assert.equal(first.interval,3);assert.equal(scheduleReview(first,'good',now).interval,6);assert.equal(scheduleReview({interval:30},'good',now).interval,30);});
+test('only learned topics unlock and due counts respect actual time',()=>{const state={read:{0:4,1:2},wins:[]};const eligible=eligibleCards(cards,state);assert.equal(eligible.length,4);const records=Object.fromEntries(eligible.map(c=>[c.id,scheduleReview(null,'good',now)]));assert.equal(dueCards(eligible,records,now).length,0);assert.equal(dueCards(eligible,records,now+3*86400000).length,4);assert.equal(reviewStats(cards,state,records).eligible,4);});
+test('saved review data is bounded, recognised and escaped',()=>{const cleaned=cleanReview({'0-0':{due:Infinity,interval:100,attempts:-4,rating:'fake',draft:'<script>x</script>'},unknown:{due:0}},cards);assert.equal(Object.keys(cleaned).length,1);assert.equal(cleaned['0-0'].interval,30);assert.equal(cleaned['0-0'].attempts,0);assert.equal(cleaned['0-0'].due,0);assert.equal(cleaned['0-0'].rating,'again');assert.ok(!escapeHTML(cleaned['0-0'].draft).includes('<script>'));});

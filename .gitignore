@@ -1,5 +1,6 @@
 .next/
 node_modules/
+test-results/
 out/
 .vercel/
 *.log
@@ -13,3 +14,5 @@ out/
 
 # Dev review screenshots must never land in the repo root again.
 /*.png
+
+.vercel

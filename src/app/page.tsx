@@ -4,11 +4,10 @@ import {
   ArrowUpRight,
   Github,
   Linkedin,
-  Plane,
 } from "lucide-react";
 import { ContactForm } from "../components/ContactForm";
 import { FlightPath } from "../components/FlightPath";
-import { experience, profile, projects, stack } from "./data";
+import { experience, profile, projects } from "./data";
 
 const signals = [
   { value: "6+ years", label: "production engineering" },
@@ -16,8 +15,6 @@ const signals = [
   { value: "Kubernetes", label: "Terraform · GitOps" },
   { value: "1,000+", label: "engineers supported" },
 ];
-
-const interests = ["Aviation", "Aerospace systems", "Developer tooling", "Mentoring", "Reliable infrastructure"];
 
 export default function Home() {
   return (
@@ -74,18 +71,10 @@ export default function Home() {
           </div>
           <div className="story-copy">
             <p className="story-lead">
-              My route into infrastructure started with an Aerospace Engineering degree.
-              Aviation taught me to admire systems where reliability, feedback and clear
-              operating decisions are non-negotiable.
+              I moved from Aerospace Engineering into DevOps, bringing the same focus on
+              reliable systems and clear operating decisions. Today I build cloud platforms
+              that make the safe path easier for engineering teams.
             </p>
-            <p>
-              Today I apply that mindset across AWS, Azure, Kubernetes, Terraform and CI/CD.
-              I&apos;ve led cloud migration work, improved infrastructure cost and delivery,
-              hardened more than 100 repositories, and supported over 1,000 engineers learning the craft.
-            </p>
-            <div className="interest-list" aria-label="Interests and passions">
-              {interests.map((interest) => <span key={interest}>{interest}</span>)}
-            </div>
           </div>
         </div>
       </section>
@@ -97,7 +86,7 @@ export default function Home() {
               <p className="section-label">02 / Selected work</p>
               <h2>Proof, not a wall of logos.</h2>
             </div>
-            <p>Four projects chosen to show range: platform engineering, developer experience, cloud security and architecture.</p>
+            <p>A few projects showing how I approach platforms, delivery and cloud security.</p>
           </div>
 
           <div className="project-list">
@@ -131,6 +120,24 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="section apricot-feature" id="learn" aria-labelledby="apricot-title">
+        <div className="section-shell apricot-feature-inner">
+          <div>
+            <p className="section-label">Learning / Open to everyone</p>
+            <h2 id="apricot-title">Apricot</h2>
+            <p>A free workshop for understanding machine learning. Read a short lesson,
+              try an experiment, then work through a practical challenge.</p>
+            <a className="inline-link" href="/apricot">Explore the workshop <ArrowRight size={17} /></a>
+          </div>
+          <ul aria-label="Workshop topics">
+            <li>Data and model fundamentals</li>
+            <li>Evaluation and common mistakes</li>
+            <li>Retrieval and language models</li>
+            <li>Running models in production</li>
+          </ul>
+        </div>
+      </section>
+
       <section className="experience-section section" id="experience">
         <div className="section-shell experience-grid">
           <div className="experience-heading">
@@ -143,7 +150,13 @@ export default function Home() {
             {experience.map((item, index) => (
               <article className="experience-item" key={`${item.company}-${item.role}`}>
                 <span className="experience-number">0{index + 1}</span>
-                <div><h3>{item.role}</h3><p>{item.company}</p></div>
+                <div className="experience-details">
+                  <h3>{item.role}</h3>
+                  <p>{item.company}</p>
+                  <div className="experience-tools" aria-label={`Tools used at ${item.company}`}>
+                    {item.tools.map((tool) => <span key={tool}>{tool}</span>)}
+                  </div>
+                </div>
                 <time>{item.period.replace("01/", "").replace("02/", "")}</time>
               </article>
             ))}
@@ -151,26 +164,12 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="principles section" id="approach">
-        <div className="section-shell">
-          <p className="section-label">04 / How I work</p>
-          <div className="principle-grid">
-            <article><span>01</span><h3>Make the safe path the easy path.</h3><p>Guardrails, reusable modules and automated checks should help teams move faster—not add theatre.</p></article>
-            <article><span>02</span><h3>Optimise for the operator.</h3><p>A platform is only good if the people deploying, debugging and recovering it can understand what it is doing.</p></article>
-            <article><span>03</span><h3>Measure what changed.</h3><p>Cost, lead time, reliability and recovery tell a stronger engineering story than the number of tools involved.</p></article>
-          </div>
-          <div className="stack-line"><span>Working stack</span><div>{stack.slice(0, 14).map((item) => <small key={item}>{item}</small>)}</div></div>
-        </div>
-      </section>
-
       <section className="contact" id="contact">
-        <div className="contact-radar" aria-hidden="true"><Plane size={34} /></div>
         <div className="section-shell contact-grid">
-          <div><p className="section-label">05 / Contact</p><h2>Let&apos;s build something<br /><em>that holds.</em></h2></div>
+          <div><p className="section-label">04 / Contact</p><h2>Let&apos;s build something<br /><em>that holds.</em></h2></div>
           <div className="contact-copy">
             <p>
-              For senior DevOps, platform engineering and cloud infrastructure opportunities.
-              Send a note and I&apos;ll come back to you directly.
+              Feel free to reach out on LinkedIn, GitHub or through my tech blog.
             </p>
             <ContactForm />
             <div>

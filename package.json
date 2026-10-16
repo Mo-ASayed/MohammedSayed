@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:apricot": "node --test tests/apricot/*.test.mjs",
+    "test:apricot:browser": "node tests/apricot/browser.mjs && node tests/apricot/mastery-browser.mjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",
@@ -17,6 +19,7 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",

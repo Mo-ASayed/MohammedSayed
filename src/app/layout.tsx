@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { ThemeToggle } from "../components/ThemeToggle";
-import { navItems, profile } from "./data";
+import { profile } from "./data";
+import { SiteNavigation } from "../components/SiteNavigation";
 
 const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
@@ -78,9 +79,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <header className="site-header">
           <Link className="brand" href="/" aria-label="Mohammed Sayed home"><span className="brand-mark">MS</span><span>{profile.domain}</span></Link>
           <div className="header-actions">
-            <nav className="top-nav" aria-label="Primary navigation">
-              {navItems.map((item) => <Link key={item.label} href={item.href}>{item.label}</Link>)}
-            </nav>
+            <SiteNavigation />
             <ThemeToggle />
           </div>
         </header>

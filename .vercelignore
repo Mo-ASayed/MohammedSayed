@@ -1,0 +1,10 @@
+.local-archive
+medium-assets
+test-results
+tests
+review-*.png
+*.log
+*.tsbuildinfo
+REVIEW.md
+TODO.md
+medium.md

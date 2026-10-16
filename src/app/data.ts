@@ -61,30 +61,6 @@ export const focusAreas = [
   }
 ];
 
-// Flat list for the homepage "working stack" strip.
-export const stack = [
-  "AWS",
-  "Azure",
-  "Kubernetes",
-  "Docker",
-  "Terraform",
-  "Helm",
-  "Argo CD",
-  "GitHub Actions",
-  "Jenkins",
-  "Prometheus",
-  "Grafana",
-  "CloudWatch",
-  "Cloudflare",
-  "Route 53",
-  "PostgreSQL",
-  "Redis",
-  "SonarQube",
-  "Trivy",
-  "Checkov",
-  "MSSQL"
-];
-
 // Categorized skills for the CV page, matching the real CV's grouping.
 export const skillGroups = [
   { category: "Containers & IaC", items: ["Docker", "Kubernetes", "Helm", "Terraform"] },
@@ -156,6 +132,7 @@ export const experience = [
     role: "Senior DevOps Engineer",
     company: "Osprey Flight Solutions",
     period: "01/2025 – present",
+    tools: ["Azure", "AWS", "Terraform", "GitHub Actions", "Checkov", "Trivy"],
     points: [
       "Technical owner of a company-wide AWS-to-Azure migration: rebuilt infrastructure in modular Terraform, replatformed 4 apps and delivered 7 new applications.",
       "Cut AWS spend from £24k to £10k per month through rightsizing, log-stream cleanup and FinOps, without impacting uptime.",
@@ -167,6 +144,7 @@ export const experience = [
     role: "DevOps Engineer",
     company: "Fivium",
     period: "01/2023 – 01/2025",
+    tools: ["AWS", "EKS", "Terraform", "Helm", "Prometheus", "Grafana"],
     points: [
       "Managed the production Amazon EKS platform with Helm, cutting release times 25% through automated lifecycle and zero-downtime deploys.",
       "Rebuilt CI/CD on GitHub Actions, cutting deployment time from 1 hour to under 20 minutes.",
@@ -178,6 +156,7 @@ export const experience = [
     role: "DevOps Instructor",
     company: "CoderCo",
     period: "01/2024 – 05/2026",
+    tools: ["Docker", "Kubernetes", "Terraform", "GitHub Actions", "Argo CD"],
     points: [
       "Supported 1,000+ engineers building practical DevOps skills across Linux, Docker, Kubernetes, Terraform and CI/CD.",
       "Developed and led 50+ hands-on labs covering Docker, Kubernetes, Terraform, GitHub Actions, ArgoCD and Helm.",
@@ -188,6 +167,7 @@ export const experience = [
     role: "DevOps Engineer",
     company: "eGain Corporation",
     period: "02/2020 – 12/2022",
+    tools: ["AWS", "EKS", "Docker", "Jenkins", "Python", "Postman"],
     points: [
       "Built and ran containerised environments on Docker and Amazon EKS, delivering reliable app and API releases.",
       "Automated build, test and release pipelines with Jenkins, Python and Bash, removing manual effort.",

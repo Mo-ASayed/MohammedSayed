@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [{ source: "/apricot", destination: "/apricot/index.html" }];
+  },
   async redirects() {
     return [
       // The CV page and PDF were removed on purpose. Anything still pointing at

@@ -125,9 +125,11 @@ export default function Home() {
           <div>
             <p className="section-label">Learning / Open to everyone</p>
             <h2 id="apricot-title">Apricot</h2>
+            <span className="apricot-edition">A small workshop for curious minds</span>
             <p>A free workshop for understanding machine learning. Read a short lesson,
               try an experiment, then work through a practical challenge.</p>
-            <a className="inline-link" href="/apricot">Explore the workshop <ArrowRight size={17} /></a>
+            <a className="button apricot-link" href="/apricot">Explore the workshop <ArrowRight size={17} /></a>
+            <p className="apricot-detail">6 topics. Learn, experiment, then play. No account needed.</p>
           </div>
           <ul aria-label="Workshop topics">
             <li>Data and model fundamentals</li>

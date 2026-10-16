@@ -398,3 +398,18 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); ou
 .experience-tools span { font-size: .7rem; color: var(--muted); }
 .experience-item h3 { line-height: 1.2; }
 .experience-heading { align-self: start; }
+
+/* Apricot keeps its warmth in either portfolio theme. */
+.apricot-feature { --apricot-ink: #513923; --apricot-muted: #715b46; --apricot-rule: #d1bfa7; background: #eee4d5; color: var(--apricot-ink); border-block: 1px solid var(--apricot-rule); }
+.apricot-feature h2 { font-size: clamp(4rem, 8vw, 7rem); letter-spacing: -.055em; margin-top: 24px; }
+.apricot-edition { display: block; font: italic 1.3rem Georgia, serif; margin-bottom: 24px; }
+.apricot-feature .section-label, .apricot-feature li { color: var(--apricot-muted); }
+.apricot-feature ul, .apricot-feature li { border-color: var(--apricot-rule); }
+.apricot-feature li { padding-block: 22px; }
+.apricot-feature li::before { color: var(--apricot-ink); }
+.apricot-link { background: #895034; color: #fffaf2; border-color: transparent; }
+.apricot-link:hover { background: #70402a; }
+.apricot-feature .apricot-detail { font-size: .8rem; color: var(--apricot-muted); margin-top: 16px; }
+html[data-theme="dark"] .apricot-feature { --apricot-ink: #f2d4b5; --apricot-muted: #c8b49d; --apricot-rule: #574636; background: #29231e; }
+html[data-theme="dark"] .apricot-link { background: #e5b48b; color: #302318; }
+html[data-theme="dark"] .apricot-link:hover { background: #f2c9a5; }

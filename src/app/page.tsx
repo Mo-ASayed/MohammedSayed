@@ -123,13 +123,13 @@ export default function Home() {
       <section className="section apricot-feature" id="learn" aria-labelledby="apricot-title">
         <div className="section-shell apricot-feature-inner">
           <div>
-            <p className="section-label">Learning / Open to everyone</p>
+            <p className="section-label">Side project / Learning in public</p>
             <h2 id="apricot-title">Apricot</h2>
-            <span className="apricot-edition">A small workshop for curious minds</span>
-            <p>A free workshop for understanding machine learning. Read a short lesson,
-              try an experiment, then work through a practical challenge.</p>
-            <a className="button apricot-link" href="/apricot">Explore the workshop <ArrowRight size={17} /></a>
-            <p className="apricot-detail">6 topics. Learn, experiment, then play. No account needed.</p>
+            <span className="apricot-edition">My little AI playground</span>
+            <p>I learn best when I can see what changes. Apricot is where I explore
+              models, language and retrieval through small visual experiments.</p>
+            <a className="button apricot-link" href="/apricot">Have a look around <ArrowRight size={17} /></a>
+            <p className="apricot-detail">A work in progress, with notes along the way.</p>
           </div>
           <ul aria-label="Workshop topics">
             <li>Data and model fundamentals</li>

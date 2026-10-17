@@ -1,3 +1,4 @@
+import {click,savedXP} from './navigation.mjs';
 import {chromium} from '@playwright/test';
 import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
@@ -11,7 +12,7 @@ try{
  await page.screenshot({path:'test-results/dashboard-desktop.png',fullPage:true});
  assert.equal(await page.locator('.mission-card').count(),6);
  for(let i=0;i<6;i++){
-  await page.locator(`.mini-lessons [data-lesson="${i}"]`).click();
+  await click(page,`.mini-lessons [data-lesson="${i}"]`);
   assert.equal(await page.locator('#lab-tab').isDisabled(),true);
   for(let s=0;s<4;s++)await page.locator('#next').click();
   assert.equal(await page.locator('#lab-tab').isDisabled(),false);
@@ -28,27 +29,27 @@ try{
   await page.locator('#note').fill(`Mission ${i+1}: My own explanation <script>alert(1)</script>`);
   await page.locator('.recall summary').first().click();
  }
- await page.reload();assert.match(await page.locator('.xp').innerText(),/600/);
- await page.locator('[data-page="notebook"]').click();
+ await page.reload();assert.equal(await savedXP(page),600);
+ await click(page,'[data-page="notebook"]');
  assert.equal(await page.locator('.badge-shelf .earned').count(),6);
  assert.match(await page.locator('#note-0').inputValue(),/My own explanation/);
  const download=page.waitForEvent('download');await page.locator('#export').click();assert.equal((await download).suggestedFilename(),'apricot-field-notes.md');
  await page.locator('#reset-progress').click();await page.locator('#cancel-reset').click();assert.equal(await page.locator('.badge-shelf .earned').count(),6);
- await page.locator('[data-page="careers"]').click();assert.equal(await page.locator('.job-card').count(),5);
- await page.setViewportSize({width:390,height:844});await page.locator('[data-page="home"]').first().click();
+ await click(page,'[data-page="careers"]');assert.equal(await page.locator('.job-card').count(),5);
+ await page.setViewportSize({width:390,height:844});await click(page,'[data-page="home"]',true);
  await page.screenshot({path:'test-results/dashboard-mobile.png',fullPage:true});
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile dashboard overflow');
  for(let i=0;i<6;i++){
-  await page.locator(`.mission-card[data-lesson="${i}"]`).click();
+  await click(page,`.mission-card[data-lesson="${i}"]`);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Lesson ${i} mobile overflow`);
   await page.locator('#lab-tab').click();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Game ${i} mobile overflow`);
-  await page.locator('[data-page="home"]').first().click();
+  await click(page,'[data-page="home"]',true);
  }
- await page.locator('.mission-card').first().click();await page.screenshot({path:'test-results/lesson-mobile.png',fullPage:true});
- await page.locator('[data-page="notebook"]').click();await page.locator('#reset-progress').click();await page.locator('#confirm-reset').click();
- assert.match(await page.locator('.xp').innerText(),/0 XP/);
- await page.locator('.mission-card').first().click();assert.equal(await page.locator('#lab-tab').isDisabled(),true);
+ await click(page,'.mission-card',true);await page.screenshot({path:'test-results/lesson-mobile.png',fullPage:true});
+ await click(page,'[data-page="notebook"]');await page.locator('#reset-progress').click();await page.locator('#confirm-reset').click();
+ assert.equal(await savedXP(page),0);
+ await click(page,'.mission-card',true);assert.equal(await page.locator('#lab-tab').isDisabled(),true);
  await page.keyboard.press('Tab');assert.ok(await page.evaluate(()=>document.activeElement!==document.body));
  assert.deepEqual(errors,[]);console.log('PASS: six lesson gates, six challenges, failure feedback, notes, persistence, export, reset, mobile overflow, keyboard focus and console errors.');
 }finally{await browser.close();}

@@ -1,3 +1,4 @@
+import {click,savedXP} from './navigation.mjs';
 import {chromium} from '@playwright/test';
 import assert from 'node:assert/strict';
 const browser=await chromium.launch();
@@ -10,7 +11,7 @@ try{
  await page.evaluate(()=>localStorage.setItem('apricot-workshop-v1',JSON.stringify({read:{0:4,1:4,2:4,3:4,4:4,5:4},wins:[0,1,2,3,4,5],notes:{0:'Existing notebook'},last:0})));
  await page.reload();
  for(let i=0;i<6;i++){
-  await page.locator(`.mini-lessons [data-lesson="${i}"]`).click();await page.locator('#lab-tab').click();await page.locator('#start-mastery').click();
+  await click(page,`.mini-lessons [data-lesson="${i}"]`);await page.locator('#lab-tab').click();await page.locator('#start-mastery').click();
   for(let r=0;r<2;r++){
    if(i===0){
     const target=r===0?['Collect','Validate','Calculate','Apply','Page']:['Receive','Retrieve','Assemble','Generate','Check'];
@@ -31,17 +32,17 @@ try{
   }
   assert.match(await page.locator('.medal-stars').innerText(),/★★★/);
  }
- await page.reload();assert.match(await page.locator('.xp').innerText(),/1500/);
- await page.locator('[data-page="notebook"]').click();assert.equal(await page.locator('#note-0').inputValue(),'Existing notebook');assert.equal(await page.locator('.notebook-stars').count(),6);
+ await page.reload();assert.equal(await savedXP(page),1500);
+ await click(page,'[data-page="notebook"]');assert.equal(await page.locator('#note-0').inputValue(),'Existing notebook');assert.equal(await page.locator('.notebook-stars').count(),6);
  // A lower replay result cannot overwrite a previous best medal or award XP twice.
- await page.locator('.mini-lessons [data-lesson="2"]').click();await page.locator('#lab-tab').click();await page.locator('#start-mastery').click();await page.locator('#submit-fit').click();assert.match(await page.locator('#round-feedback').innerText(),/Try another/);
- await slider('#fit-slope',20);await slider('#fit-intercept',30);await page.locator('#submit-fit').click();await page.locator('.next-round').click();await slider('#fit-slope',35);await slider('#fit-intercept',50);await page.locator('#submit-fit').click();assert.match(await page.locator('.medal-stars').innerText(),/★★☆/);assert.match(await page.locator('.xp').innerText(),/1500/);
+ await click(page,'.mini-lessons [data-lesson="2"]');await page.locator('#lab-tab').click();await page.locator('#start-mastery').click();await page.locator('#submit-fit').click();assert.match(await page.locator('#round-feedback').innerText(),/Try another/);
+ await slider('#fit-slope',20);await slider('#fit-intercept',30);await page.locator('#submit-fit').click();await page.locator('.next-round').click();await slider('#fit-slope',35);await slider('#fit-intercept',50);await page.locator('#submit-fit').click();assert.match(await page.locator('.medal-stars').innerText(),/★★☆/);assert.equal(await savedXP(page),1500);
  await page.setViewportSize({width:390,height:844});
  for(let i=0;i<6;i++){
-  await page.locator('[data-page="home"]').first().click();await page.locator(`.mission-card[data-lesson="${i}"]`).click();await page.locator('#lab-tab').click();await page.locator('#start-mastery').click();
+  await click(page,'[data-page="home"]',true);await click(page,`.mission-card[data-lesson="${i}"]`);await page.locator('#lab-tab').click();await page.locator('#start-mastery').click();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Mastery ${i} mobile overflow`);
  }
- await page.locator('[data-page="home"]').first().click();await page.locator('.mission-card').first().click();await page.locator('#learn-tab').click();
+ await click(page,'[data-page="home"]',true);await click(page,'.mission-card',true);await page.locator('#learn-tab').click();
  await page.screenshot({path:'test-results/reading-mobile-v2.png',fullPage:true});
  assert.equal(await page.locator('.understanding').count(),1);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.setViewportSize({width:1440,height:1100});await page.screenshot({path:'test-results/reading-desktop-v2.png',fullPage:true});

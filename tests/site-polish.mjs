@@ -1,3 +1,4 @@
+import {click,savedXP} from './apricot/navigation.mjs';
 import { chromium } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
@@ -49,10 +50,10 @@ try {
   await page.screenshot({ path: 'test-results/polish-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 1366, height: 600 });
   await page.goto(base + '/apricot');
-  await page.locator('.sidebar-bottom a').scrollIntoViewIfNeeded();
-  const back = await page.locator('.sidebar-bottom a').boundingBox();
+  await page.locator('.portfolio-return').scrollIntoViewIfNeeded();
+  const back = await page.locator('.portfolio-return').boundingBox();
   assert.ok(back.y >= 0 && back.y + back.height <= 600, 'Sidebar return link is unreachable');
-  await page.locator('.mission-card').first().click();
+  await click(page,'.mission-card',true);
   await page.locator('#next').focus();
   await page.keyboard.press('Enter');
   await page.waitForFunction(() => document.activeElement?.id === 'main');

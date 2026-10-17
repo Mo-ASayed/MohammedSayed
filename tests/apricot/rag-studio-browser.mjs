@@ -1,3 +1,4 @@
+import {click,savedXP} from './navigation.mjs';
 import {chromium} from '@playwright/test';
 import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
@@ -9,11 +10,11 @@ try {
  await page.goto(base);await page.locator('#start-rag-studio').click();
  assert.equal(new URL(page.url()).hash,'#rag');
  assert.ok(await page.locator('[data-stage="2"]').isDisabled());
- await page.locator('[data-pipe="5"]').click();assert.ok((await page.locator('.pipeline-detail').innerText()).includes('Check that its claims'));
+ await click(page,'[data-pipe="5"]');assert.ok((await page.locator('.pipeline-detail').innerText()).includes('Check that its claims'));
  await page.screenshot({path:'test-results/rag-overview.png',fullPage:true});
  await page.locator('#open-map').click();await page.locator('[data-query="luggage"]').click();
  assert.ok((await page.locator('#ranked-results').innerText()).includes('Cabin bag allowance'));
- await page.locator('#search-method').selectOption('keyword');assert.ok(await page.locator('.no-evidence').isVisible());
+ await page.locator('.search-settings > summary').click();await page.locator('#search-method').selectOption('keyword');assert.ok(await page.locator('.no-evidence').isVisible());
  await page.locator('#search-method').selectOption('vector');await page.locator('#vector-query').fill('flight baggage');await page.locator('#vector-query').press('Enter');
  await page.locator('#current-only').uncheck();assert.ok((await page.locator('#ranked-results').innerText()).includes('Old cabin bag policy'));
  await page.locator('[data-doc="7"]').click();assert.ok((await page.locator('#document-inspector').innerText()).includes('OUTDATED'));
@@ -32,7 +33,7 @@ try {
   assert.equal(await page.locator('.passport-stamps .stamped').count(),3);
  }
  await page.screenshot({path:'test-results/rag-mobile.png',fullPage:true});
- await page.locator('[data-page="notebook"]').click();await page.locator('#reset-progress').click();await page.locator('#confirm-reset').click();
+ await click(page,'[data-page="notebook"]');await page.locator('#reset-progress').click();await page.locator('#confirm-reset').click();
  assert.equal(await page.evaluate(()=>localStorage.getItem('apricot-rag-studio-v1')),null);
  assert.deepEqual(errors,[]);console.log('PASS: RAG overview, vector/keyword retrieval, stale filtering, inspection, all3 missions, persistence, escaping and responsive layouts.');
 } finally {await browser.close();}

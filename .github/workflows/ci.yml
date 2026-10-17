@@ -54,6 +54,7 @@ jobs:
           npm run test:apricot:browser
           node tests/apricot/review-browser.mjs
           node tests/apricot/rag-studio-browser.mjs
+          node tests/apricot/personal-browser.mjs
 
       - name: Save browser evidence
         if: always()

@@ -27,7 +27,7 @@ try{
  assert.equal(await page.locator('#token-output').innerText(),'Your meeting has moved to Friday.');
  await page.screenshot({path:'test-results/language-visual.png',fullPage:true});
  await page.locator('#token-next').click();assert.equal(await page.locator('.generated-piece').count(),1);
- await page.locator('#ai-rag').click();await page.locator('#open-map').click();
+ await page.locator('#ai-rag').click();await page.locator('#open-map').click();await page.locator('.original-search > summary').click();
  assert.equal(await page.locator('.search-settings').getAttribute('open'),null);
  await page.locator('[data-query="luggage"]').click();assert.match(await page.locator('#ranked-results').innerText(),/Cabin bag/);
  for(const width of [320,390,768]){
@@ -35,7 +35,7 @@ try{
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Home overflow ${width}`);
   await page.locator('#start-basics').click();
   for(let i=0;i<4;i++){assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Scene ${i} overflow ${width}`);if(i<3)await page.locator('#ai-next').click();}
-  await page.locator('#ai-rag').click();await page.locator('#open-map').click();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`RAG overflow ${width}`);
+  await page.locator('#ai-rag').click();await page.locator('#open-map').click();await page.locator('.original-search > summary').click();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`RAG overflow ${width}`);
  }
  await page.setViewportSize({width:390,height:844});await page.goto(url);await page.reload();await page.screenshot({path:'test-results/personal-home-mobile.png',fullPage:true});
  await page.locator('.reference-menu>summary').click();assert.ok(await page.locator('[data-page="review"]').isVisible());

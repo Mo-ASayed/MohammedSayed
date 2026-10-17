@@ -12,7 +12,7 @@ try {
  assert.ok(await page.locator('[data-stage="2"]').isDisabled());
  await click(page,'[data-pipe="5"]');assert.ok((await page.locator('.pipeline-detail').innerText()).includes('Check that its claims'));
  await page.screenshot({path:'test-results/rag-overview.png',fullPage:true});
- await page.locator('#open-map').click();await page.locator('[data-query="luggage"]').click();
+ await page.locator('#open-map').click();await page.locator('.original-search > summary').click();await page.locator('[data-query="luggage"]').click();
  assert.ok((await page.locator('#ranked-results').innerText()).includes('Cabin bag allowance'));
  await page.locator('.search-settings > summary').click();await page.locator('#search-method').selectOption('keyword');assert.ok(await page.locator('.no-evidence').isVisible());
  await page.locator('#search-method').selectOption('vector');await page.locator('#vector-query').fill('flight baggage');await page.locator('#vector-query').press('Enter');
@@ -27,7 +27,7 @@ try {
  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('apricot-rag-studio-v1'))),[0,1,2]);
  await page.screenshot({path:'test-results/rag-stamps.png',fullPage:true});
  for(const width of [320,390,768]){
-  await page.setViewportSize({width,height:844});await page.goto(base+'#rag');await page.reload();await page.locator('#open-map').click();
+  await page.setViewportSize({width,height:844});await page.goto(base+'#rag');await page.reload();await page.locator('#open-map').click();await page.locator('.original-search > summary').click();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Map overflow at ${width}`);
   await page.locator('#open-missions').click();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Game overflow at ${width}`);
   assert.equal(await page.locator('.passport-stamps .stamped').count(),3);

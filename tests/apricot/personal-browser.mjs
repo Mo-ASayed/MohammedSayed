@@ -8,6 +8,9 @@ try{
  assert.equal(await page.locator('#main .primary:visible').count(),1);
  assert.equal(await page.locator('.sidebar').count(),0);
  assert.equal(await page.locator('.exploration-shelf').getAttribute('open'),null);
+ await page.locator('#preview-slider').focus();await page.keyboard.press('End');
+ assert.equal(await page.locator('#preview-label').innerText(),'Spam');
+ await page.keyboard.press('Home');assert.equal(await page.locator('#preview-label').innerText(),'Ordinary email');
  await page.screenshot({path:'test-results/personal-home.png',fullPage:true});
  await page.locator('#start-basics').click();assert.equal(new URL(page.url()).hash,'#basics');
  assert.equal(await page.locator('.email-chart circle').count(),6);
@@ -15,9 +18,15 @@ try{
  await page.locator('#ai-next').click();assert.match(await page.locator('#prediction-result').innerText(),/Ordinary email/);
  for(const id of ['email-links','email-urgency']){await page.locator('#'+id).focus();await page.keyboard.press('End');}
  assert.match(await page.locator('#prediction-result').innerText(),/Spam/);
+ assert.equal(await page.locator('.distance-readout meter').count(),2);
+ assert.ok(Number(await page.locator('.distance-readout meter').first().getAttribute('value'))>Number(await page.locator('.distance-readout meter').last().getAttribute('value')));
  const dot=await page.locator('#new-email').boundingBox(),chart=await page.locator('.email-chart svg').boundingBox();assert.ok(dot.y>=chart.y&&dot.x+dot.width<=chart.x+chart.width);
  await page.screenshot({path:'test-results/personal-prediction.png',fullPage:true});
  await page.locator('#ai-next').click();assert.ok(await page.locator('.language-picture').isVisible());
+ for(let i=0;i<7;i++)await page.locator('#token-next').click();
+ assert.equal(await page.locator('#token-output').innerText(),'Your meeting has moved to Friday.');
+ await page.screenshot({path:'test-results/language-visual.png',fullPage:true});
+ await page.locator('#token-next').click();assert.equal(await page.locator('.generated-piece').count(),1);
  await page.locator('#ai-rag').click();await page.locator('#open-map').click();
  assert.equal(await page.locator('.search-settings').getAttribute('open'),null);
  await page.locator('[data-query="luggage"]').click();assert.match(await page.locator('#ranked-results').innerText(),/Cabin bag/);

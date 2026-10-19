@@ -1,0 +1,19 @@
+import {classify} from './ai-playground.js';
+export const inboxCases=[
+ {title:'Lunch plans',x:0,y:0,spam:false},
+ {title:'Urgent project links',x:4,y:4,spam:false},
+ {title:'Quiet phishing email',x:1,y:1,spam:true},
+ {title:'Claim your prize',x:5,y:4,spam:true},
+ {title:'Team meeting',x:1,y:0,spam:false},
+ {title:'Limited offer',x:3,y:4,spam:true}
+];
+export function evaluateInbox(threshold){
+ const rows=inboxCases.map(c=>{const {distance}=classify(c);const margin=distance[0]-distance[1];return {...c,margin,predicted:margin>threshold};});
+ return {rows,caught:rows.filter(c=>c.spam&&c.predicted).length,falseAlarms:rows.filter(c=>!c.spam&&c.predicted).length,missed:rows.filter(c=>c.spam&&!c.predicted).length};
+}
+export function mountInboxBench(host){
+ host.innerHTML=`<details class="mini-bench"><summary>Stress-test the model on a new inbox <span>2 min</span></summary><div class="bench-body"><span class="eyebrow">EVALUATION / ERRORS HAVE DIFFERENT COSTS</span><h2>What slips through?</h2><p>These six labelled emails were not used for training. Change how much evidence the model needs before calling something spam. The learned centres stay fixed.</p><label for="inbox-threshold">Spam threshold <output id="inbox-value"></output></label><input id="inbox-threshold" type="range" min="-5" max="5" step="0.5" value="0"><div class="threshold-scale"><span>Catch more spam</span><span>Fewer false alarms</span></div><div id="inbox-metrics" class="inbox-metrics"></div><div id="inbox-cases" class="inbox-cases"></div><p class="bench-goal"><b>Your goal:</b> catch all three spam emails, with at most one ordinary email flagged.</p><button id="inbox-test" class="primary">Check the trade-off</button><p id="inbox-feedback" role="status"></p><small>The score is distance to the ordinary centre minus distance to the spam centre. Above the threshold means spam. It is not a probability. These six examples are an illustration, not a reliable performance estimate.</small></div></details>`;
+ const slider=host.querySelector('#inbox-threshold');
+ function update(){const r=evaluateInbox(+slider.value);host.querySelector('#inbox-value').textContent=slider.value;host.querySelector('#inbox-metrics').innerHTML=[['Spam caught',r.caught,3],['Spam missed',r.missed,3],['False alarms',r.falseAlarms,3]].map(([label,value,max])=>'<div><strong>'+value+'</strong><span>'+label+'</span><meter min="0" max="'+max+'" value="'+value+'" aria-label="'+label+'">'+value+'</meter></div>').join('');host.querySelector('#inbox-cases').innerHTML=r.rows.map(c=>'<article class="'+(c.predicted===c.spam?'correct-case':'wrong-case')+'"><strong>'+c.title+'</strong><span>True label: '+(c.spam?'spam':'ordinary')+'</span><b>'+(c.predicted?'Spam folder':'Inbox')+'</b><small>'+(c.predicted===c.spam?'Correct':c.predicted?'False alarm: useful email blocked':'Miss: spam got through')+'</small></article>').join('');host.querySelector('#inbox-feedback').textContent='';}
+ slider.oninput=update;host.querySelector('#inbox-test').onclick=()=>{const r=evaluateInbox(+slider.value);host.querySelector('#inbox-feedback').textContent=r.caught===3&&r.falseAlarms<=1?'Solved. You caught the quiet phishing email, but the urgent work message is still a false alarm. Threshold tuning cannot repair missing information. Better features or data may help.':r.missed?'Some spam still reaches the inbox. Lower the threshold and watch the false alarms too.':'Too many useful messages are blocked. Raise the threshold a little.';};update();
+}

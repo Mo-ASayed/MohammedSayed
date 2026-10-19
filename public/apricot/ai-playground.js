@@ -1,3 +1,4 @@
+import {mountInboxBench} from './inbox-bench.js';
 const samples = [
  {x:0,y:1,label:0},{x:1,y:0,label:0},{x:1,y:1,label:0},
  {x:3,y:4,label:1},{x:4,y:3,label:1},{x:4,y:4,label:1}
@@ -24,6 +25,7 @@ export function mountAiPlayground(host,onRag){
   const next=host.querySelector('#ai-next');if(next)next.onclick=()=>{step++;render();host.querySelector('h1').focus();};
   const rag=host.querySelector('#ai-rag');if(rag)rag.onclick=onRag;
   if(step<3)map();else language();
+  if(step===2){host.querySelector('#ai-scene').insertAdjacentHTML('beforeend','<div id="inbox-bench"></div>');mountInboxBench(host.querySelector('#inbox-bench'));}
  }
  function map(){
   const centres=fitCentres();

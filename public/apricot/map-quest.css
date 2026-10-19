@@ -46,3 +46,4 @@
 @media(max-width:650px) { .quest-source span,#quest-query span {font-size:9px} }
 @media(prefers-reduced-motion:reduce) { #quest-links line {animation:none} }
 .quest-nudge:not(:empty) { padding:12px 16px; background:#fffaf0; border-radius:8px; border-left:3px solid #b7865d; }
+.quest-inspect { padding:14px 16px; margin-top:12px; background:var(--paper); border:1px solid var(--line); border-radius:10px; }.quest-inspect p {font-size:13px;line-height:1.7;margin:8px 0}.quest-inspect small {font-size:11px;color:var(--muted)}

@@ -126,9 +126,9 @@ export default function Home() {
             <p className="section-label">Side project / Learning in public</p>
             <h2 id="apricot-title">Apricot</h2>
             <span className="apricot-edition">My little AI playground</span>
-            <p>I learn best when I can see what changes. Apricot is where I explore
+            <p className="apricot-description">I learn best when I can see what changes. Apricot is where I explore
               models, language and retrieval through small visual experiments.</p>
-            <a className="button apricot-link" href="/apricot">Have a look around <ArrowRight size={17} /></a>
+            <a className="button apricot-link" href="/apricot"><span>Have a look around</span><ArrowRight size={17} aria-hidden="true" /></a>
             <p className="apricot-detail">A work in progress, with notes along the way.</p>
           </div>
           <ul aria-label="Workshop topics">

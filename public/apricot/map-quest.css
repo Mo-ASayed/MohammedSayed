@@ -68,3 +68,4 @@
 .score-scroll{overflow-x:auto;border-radius:6px}.score-scroll:focus-visible{outline:2px solid #995232;outline-offset:3px}.chart-scroll-hint{display:none}@media(max-width:600px){.score-scroll svg{min-width:520px}.chart-scroll-hint{display:inline}}
 .scene-steps>button {background:transparent;border:0;text-align:left;cursor:pointer}.scene-steps>button:disabled{cursor:default;opacity:.55}.scene-steps>button:focus-visible{outline:2px solid #995232;outline-offset:-3px}
 #new-email {cursor:grab;touch-action:none}#new-email:active{cursor:grabbing}#new-email:focus-visible{outline:none;stroke:#995232;stroke-width:5}
+.scene-explanation .boundary-toggle {display:flex;align-items:center;gap:8px;font-size:12px;margin-top:20px}.boundary-toggle input{width:auto;accent-color:#995232}.scene-explanation .boundary-note{font-size:12px;line-height:1.7;color:var(--muted)}

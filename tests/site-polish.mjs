@@ -15,6 +15,18 @@ try {
     await page.setViewportSize({ width, height: 844 });
     await page.goto(base);
     await page.evaluate(() => document.fonts.ready);
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Homepage overflow at ${width}`);
+    assert.match(await page.locator('h1').innerText(), /Mohammed Sayed/);
+    const preview = page.locator('.apricot-preview img');
+    await preview.scrollIntoViewIfNeeded();
+    await preview.evaluate(img => img.decode());
+    assert.ok(await preview.evaluate(img => img.naturalWidth > 0), 'Apricot preview failed to load');
+    const roleDetails = page.locator('.experience-more').first();
+    await roleDetails.locator('summary').focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await roleDetails.getAttribute('open'), '');
+    assert.ok(await roleDetails.locator('li').first().isVisible());
+    await page.goto(base);
     const links = await page.locator('.hero-links').boundingBox();
     const strip = await page.locator('.signal-strip').boundingBox();
     assert.ok(links.y + links.height <= strip.y, `Hero actions overlap stats at ${width}`);
@@ -63,7 +75,7 @@ try {
   await page.goto(base);
   await page.screenshot({ path: 'test-results/polish-mobile.png', fullPage: true });
   assert.deepEqual(errors, []);
-  console.log('PASS: hero geometry, tablet clipping, mobile menu, project routes, blocked storage, sidebar access and keyboard focus.');
+  console.log('PASS: identity, preview image, keyboard role disclosures, hero geometry, responsive layouts, mobile menu, project routes, themes, blocked storage and keyboard focus.');
 } finally {
   await browser.close();
 }

@@ -27,13 +27,13 @@ export default function Home() {
           <div className="hero-shell">
             <div className="hero-copy">
               <p className="kicker"><span /> Senior DevOps &amp; Platform Engineer · London</p>
-              <h1 id="hero-title">Cloud platforms.<br /><em>Engineered to hold.</em></h1>
+              <h1 id="hero-title">Mohammed Sayed.<br /><em>Platform engineer.</em></h1>
               <p className="hero-summary">
-                I&apos;m Mohammed Sayed. I build secure cloud foundations, delivery systems and
-                production operations that stay understandable when the pressure is on.
+                I build cloud infrastructure and the tools teams use to ship software.
+                Based in London, with a background in aerospace and a growing interest in AI.
               </p>
               <div className="hero-actions">
-                <a className="button button-primary" href="#work">See the evidence <ArrowDownRight size={18} /></a>
+                <a className="button button-primary" href="#work">Explore my work <ArrowDownRight size={18} /></a>
                 <a className="button button-ghost" href="#contact">Get in touch <ArrowRight size={17} /></a>
               </div>
               <div className="hero-links" aria-label="Professional profiles">
@@ -42,11 +42,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="hero-flight-status" aria-hidden="true">
-              <span>Flight plan / 01</span>
-              <strong>LHR → RELIABLE SYSTEMS</strong>
-              <div><span>Cloud</span><span>Platform</span><span>Scroll ↓</span></div>
-            </div>
+            <aside className="profile-now" aria-label="What I am working on">
+              <span className="now-label">A little context</span>
+              <div><span>Working</span><strong>Senior DevOps Engineer</strong><p>Osprey Flight Solutions</p></div>
+              <div><span>Making</span><a href="/apricot">Apricot, my visual AI notebook <ArrowUpRight size={16} /></a></div>
+              <div><span>Writing</span><a href={profile.medium} target="_blank" rel="noreferrer">Notes from building things <ArrowUpRight size={16} /></a></div>
+            </aside>
 
           </div>
 
@@ -66,8 +67,8 @@ export default function Home() {
       <section className="story section" id="about">
         <div className="section-shell story-grid">
           <div>
-            <p className="section-label">01 / The engineer</p>
-            <h2>Precision is more than an aesthetic.</h2>
+            <p className="section-label">01 / About me</p>
+            <h2>From aerospace to infrastructure.</h2>
           </div>
           <div className="story-copy">
             <p className="story-lead">
@@ -84,9 +85,9 @@ export default function Home() {
           <div className="section-intro">
             <div>
               <p className="section-label">02 / Selected work</p>
-              <h2>Proof, not a wall of logos.</h2>
+              <h2>Things I&apos;ve built.</h2>
             </div>
-            <p>A few projects showing how I approach platforms, delivery and cloud security.</p>
+            <p>Open-source tools and hands-on infrastructure projects. The code is there to explore.</p>
           </div>
 
           <div className="project-list">
@@ -97,6 +98,10 @@ export default function Home() {
                   <div className="project-index">0{index + 1}</div>
                   <div className="project-icon"><Icon size={28} strokeWidth={1.6} aria-hidden="true" /></div>
                   <div className="project-body">
+                    {index < 2 && <div className={`project-preview preview-${index}`}>
+                      <span className="preview-caption">{index === 0 ? "DockerForge / workflow" : "EKS platform / delivery path"}</span>
+                      {index === 0 ? <div className="forge-preview"><code>Project source</code><ArrowRight size={18} aria-hidden="true" /><code>DockerForge</code><ArrowRight size={18} aria-hidden="true" /><code>Dockerfile</code><p>Stack detection <span>/</span> Secure defaults <span>/</span> CI linting</p></div> : <div className="platform-preview"><div><span>Terraform</span><small>Provision</small></div><ArrowRight size={18} aria-hidden="true" /><div><span>Argo CD</span><small>Deliver</small></div><ArrowRight size={18} aria-hidden="true" /><div><span>Amazon EKS</span><small>9 Go services</small></div></div>}
+                    </div>}
                     <div className="project-meta"><span>{project.status}</span><span>{project.scope}</span></div>
                     <h3>{project.title}</h3>
                     <p>{project.description}</p>
@@ -125,18 +130,17 @@ export default function Home() {
           <div>
             <p className="section-label">Side project / Learning in public</p>
             <h2 id="apricot-title">Apricot</h2>
-            <span className="apricot-edition">My little AI playground</span>
+            <span className="apricot-edition">Learning by moving things.</span>
             <p className="apricot-description">I learn best when I can see what changes. Apricot is where I explore
               models, language and retrieval through small visual experiments.</p>
             <a className="button apricot-link" href="/apricot"><span>Have a look around</span><ArrowRight size={17} aria-hidden="true" /></a>
             <p className="apricot-detail">A work in progress, with notes along the way.</p>
           </div>
-          <ul aria-label="Workshop topics">
-            <li>Data and model fundamentals</li>
-            <li>Evaluation and common mistakes</li>
-            <li>Retrieval and language models</li>
-            <li>Running models in production</li>
-          </ul>
+          <a className="apricot-preview" href="/apricot#rag" aria-label="Open the interactive RAG map in Apricot">
+            <div className="preview-browser"><span /><span /><span /><small>Inside Apricot / the retrieval map</small></div>
+            <img src="/images/apricot-map.webp" width="1000" height="760" loading="lazy" alt="Apricot's retrieval map with draggable passages, a question marker and a search radius." />
+            <span className="preview-link">Move a question. Watch the evidence change. <ArrowUpRight size={18} /></span>
+          </a>
         </div>
       </section>
 
@@ -144,9 +148,9 @@ export default function Home() {
         <div className="section-shell experience-grid">
           <div className="experience-heading">
             <p className="section-label">03 / Experience</p>
-            <h2>Built in production.<br />Shared in public.</h2>
+            <h2>Where I&apos;ve worked.</h2>
             <p>Six years across cloud platforms, delivery engineering and technical education.</p>
-            <a className="inline-link" href="#contact">Ask for the full detail <ArrowRight size={16} /></a>
+            <a className="inline-link" href="#contact">Talk about my experience <ArrowRight size={16} /></a>
           </div>
           <div className="experience-list">
             {experience.map((item, index) => (
@@ -156,6 +160,7 @@ export default function Home() {
                   <h3>{item.role}</h3>
                   <p>{item.company}</p>
                   <p className="experience-outcome">{item.points[0]}</p>
+                  <details className="experience-more"><summary>More about this role</summary><ul>{item.points.slice(1).map(point => <li key={point}>{point}</li>)}</ul></details>
                   <div className="experience-tools" aria-label={`Tools used at ${item.company}`}>
                     {item.tools.map((tool) => <span key={tool}>{tool}</span>)}
                   </div>
@@ -169,10 +174,10 @@ export default function Home() {
 
       <section className="contact" id="contact">
         <div className="section-shell contact-grid">
-          <div><p className="section-label">04 / Contact</p><h2>Let&apos;s build something<br /><em>that holds.</em></h2></div>
+          <div><p className="section-label">04 / Contact</p><h2>Have something<br /><em>in mind?</em></h2></div>
           <div className="contact-copy">
             <p>
-              Feel free to reach out on LinkedIn, GitHub or through my tech blog.
+              For engineering roles, project questions or a conversation about something here, send me a note.
             </p>
             <ContactForm />
             <div>

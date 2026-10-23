@@ -5,7 +5,7 @@ const browser=await chromium.launch();const context=await browser.newContext({vi
 const url=process.env.APRICOT_URL||'http://127.0.0.1:4180/apricot';
 try{
  await page.goto(url);await click(page,'[data-page="review"]');assert.equal(await page.locator('#begin-review').isDisabled(),true);
- await page.locator('#first-lesson').click();await page.locator('#next').click();await page.reload();await click(page,'#resume-session');assert.equal(await page.locator('.lesson-article h2').innerText(),'Predict a label, a number, or generate content');
+ await page.locator('#first-lesson').click();await page.locator('#next').click();await page.reload();assert.equal(await page.locator('.lesson-article h2').innerText(),'Predict a label, a number, or generate content');
  for(let i=0;i<3;i++)await page.locator('#next').click();
  await click(page,'[data-page="review"]');assert.match(await page.locator('.review-stats').innerText(),/4/);await page.locator('#begin-review').click();
  assert.equal(await page.locator('#reveal-answer').isDisabled(),true);

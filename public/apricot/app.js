@@ -18,7 +18,7 @@ try { const raw=JSON.parse(localStorage.getItem(STUDY_KEY));study.records=cleanR
 function saveStudy(){try{localStorage.setItem(STUDY_KEY,JSON.stringify(study));}catch{toast('Review progress could not be saved in this browser.');}}
 function readRoute(){const name=location.hash.slice(1);const match=/^lesson\/(\d+)$/.exec(name);if(match&&+match[1]<lessons.length)return {page:'lesson',lesson:+match[1]};return {page:['basics','rag','notebook','review','careers'].includes(name)?name:'home'};}
 const initialRoute=readRoute();let routeReady=false;
-let page=initialRoute.page,current=initialRoute.lesson??state.last,step=0;
+let page=initialRoute.page,current=initialRoute.lesson??state.last,step=page==='lesson'?Math.min(state.read[current]||0,lessons[current].sections.length-1):0;
 const app=document.querySelector('#app');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch{storageOK=false;toast('Browser storage is unavailable. Export your notebook before leaving.');}}

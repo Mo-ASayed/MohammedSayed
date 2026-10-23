@@ -73,3 +73,4 @@
 .label-comparison{margin:0}.label-comparison figcaption{font-size:11px;line-height:1.7;color:var(--muted)}
 .retrieval-audit{font-size:12px;line-height:1.7;margin:14px 0}.retrieval-audit summary{cursor:pointer}.retrieval-audit table{width:100%;border-collapse:collapse;table-layout:fixed}.retrieval-audit th,.retrieval-audit td{text-align:left;vertical-align:top;padding:9px 6px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}.retrieval-audit th:nth-child(2){width:20%}.retrieval-audit tbody th{font-weight:500}
 .chunk-capacity{font-size:12px;margin:14px 0;line-height:1.7}.chunk-capacity summary{cursor:pointer}.chunk-capacity label{display:block;margin-top:14px}
+#inbox-baseline table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12px}#inbox-baseline th,#inbox-baseline td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}#inbox-baseline tbody th{font-weight:500}

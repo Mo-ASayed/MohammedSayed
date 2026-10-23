@@ -12,7 +12,7 @@ export function classify(point,centres=fitCentres()) {
  return {label:distance[1]<distance[0]?1:0,distance};
 }
 export function mountAiPlayground(host,onRag){
- let step=0,x=1,y=1;
+ let step=0,visited=0,x=1,y=1;
  const titles=['Start with examples.','Find a pattern.','Try something new.','Where does an LLM fit?'];
  const intros=[
  'Six emails. Two inputs: links and urgency words. A person supplies the labels.',
@@ -21,7 +21,9 @@ export function mountAiPlayground(host,onRag){
  'A classifier picks a category. A language model builds a response from the context you give it.'
  ];
  function render(){
-  host.innerHTML=`<section class="ai-playground"><div class="experiment-caption"><span>ONE SMALL EXPERIMENT</span><span>${step+1} / 4</span></div><h1 tabindex="-1">${titles[step]}</h1><p class="experiment-intro">${intros[step]}</p><div class="scene-steps" aria-label="Experiment progress">${["Examples","Training","Prediction","Language"].map((name,i)=>`<span class="${i===step?"current":i<step?"visited":""}"><b>${i+1}</b>${name}</span>`).join("")}</div><div id="ai-scene"></div><div class="experiment-bottom"><button class="text-button" id="ai-prev" ${step===0?'disabled':''}>Back</button>${step<3?`<button class="primary" id="ai-next">${['Show me training','Try a new email','And language models?'][step]} &rarr;</button>`:'<button class="primary" id="ai-rag">See how RAG gives it context &rarr;</button>'}</div></section>`;
+  visited=Math.max(visited,step);
+  host.innerHTML=`<section class="ai-playground"><div class="experiment-caption"><span>ONE SMALL EXPERIMENT</span><span>${step+1} / 4</span></div><h1 tabindex="-1">${titles[step]}</h1><p class="experiment-intro">${intros[step]}</p><div class="scene-steps" aria-label="Experiment progress">${["Examples","Training","Prediction","Language"].map((name,i)=>`<button type="button" data-ai-scene="${i}" ${i>visited?"disabled":""} aria-current="${i===step?"step":"false"}" class="${i===step?"current":i<=visited?"visited":""}"><b>${i+1}</b>${name}</button>`).join("")}</div><div id="ai-scene"></div><div class="experiment-bottom"><button class="text-button" id="ai-prev" ${step===0?'disabled':''}>Back</button>${step<3?`<button class="primary" id="ai-next">${['Show me training','Try a new email','And language models?'][step]} &rarr;</button>`:'<button class="primary" id="ai-rag">See how RAG gives it context &rarr;</button>'}</div></section>`;
+  host.querySelectorAll('[data-ai-scene]').forEach(button=>button.onclick=()=>{step=+button.dataset.aiScene;render();host.querySelector('h1').focus();});
   host.querySelector('#ai-prev').onclick=()=>{step--;render();host.querySelector('h1').focus();};
   const next=host.querySelector('#ai-next');if(next)next.onclick=()=>{step++;render();host.querySelector('h1').focus();};
   const rag=host.querySelector('#ai-rag');if(rag)rag.onclick=onRag;

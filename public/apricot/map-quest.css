@@ -70,3 +70,4 @@
 #new-email {cursor:grab;touch-action:none}#new-email:active{cursor:grabbing}#new-email:focus-visible{outline:none;stroke:#995232;stroke-width:5}
 .scene-explanation .boundary-toggle {display:flex;align-items:center;gap:8px;font-size:12px;margin-top:20px}.boundary-toggle input{width:auto;accent-color:#995232}.scene-explanation .boundary-note{font-size:12px;line-height:1.7;color:var(--muted)}
 .feature-twin-result{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}.feature-twin-result article{padding:18px;border:1px solid var(--line);border-radius:10px;background:#f5ecdf}.feature-twin-result h3{font:24px Georgia,serif}.feature-twin-result p{font-size:13px;line-height:1.7}.feature-twin-result strong{font-size:13px}.feature-twin-result .feature-vector{font:32px monospace}@media(max-width:550px){.feature-twin-result{grid-template-columns:1fr}}
+.label-comparison{margin:0}.label-comparison figcaption{font-size:11px;line-height:1.7;color:var(--muted)}

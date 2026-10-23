@@ -1,0 +1,10 @@
+import {classify} from './ai-playground.js';
+export const featureTwins=[
+ {title:'Routine team update',message:'One planning link and a routine reminder.',links:1,urgency:1,label:0},
+ {title:'Urgent incident response',message:'Four runbook links and four urgent reminders. This is important work.',links:4,urgency:4,label:0},
+ {title:'Unwanted promotion',message:'Four offer links and four urgent reminders. This is spam.',links:4,urgency:4,label:1}
+];
+export function mountFeatureTwins(host){
+ host.innerHTML=`<details class="mini-bench"><summary>Different messages, identical inputs <span>1 min</span></summary><div class="bench-body"><h2>What can the model actually see?</h2><p>A feature is an input we give the model. This classifier gets two counts, so it cannot tell two messages apart when those counts match.</p><label for="feature-message">Explore three emails <output id="feature-position"></output></label><input id="feature-message" type="range" min="0" max="2" value="0"><div id="feature-twin-result" class="feature-twin-result" aria-live="polite"></div><small>Try the incident message and the promotion. Changing the threshold affects both together. Distinguishing them needs more informative inputs, then evaluation.</small></div></details>`;
+ const update=()=>{const index=+host.querySelector('#feature-message').value,c=featureTwins[index],guess=classify({x:c.links,y:c.urgency}).label;host.querySelector('#feature-position').textContent=(index+1)+' / 3';host.querySelector('#feature-twin-result').innerHTML='<article><span class="eyebrow">THE HUMAN SEES</span><h3>'+c.title+'</h3><p>'+c.message+'</p><strong>True label: '+(c.label?'spam':'ordinary')+'</strong></article><article><span class="eyebrow">THE MODEL RECEIVES</span><p class="feature-vector">['+c.links+', '+c.urgency+']</p><p>Links, urgency words</p><strong>Prediction: '+(guess?'spam':'ordinary')+'</strong><p>'+(guess===c.label?'Correct on this example.':'A false alarm. The inputs lost the meaning that matters.')+'</p></article>';};host.querySelector('#feature-message').oninput=update;update();
+}

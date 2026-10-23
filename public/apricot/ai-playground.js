@@ -1,3 +1,4 @@
+import {mountFeatureTwins} from './feature-twins.js';
 import {mountLabelBench} from './label-bench.js';
 import {mountInboxBench} from './inbox-bench.js';
 export const samples = [
@@ -29,7 +30,7 @@ export function mountAiPlayground(host,onRag){
   const rag=host.querySelector('#ai-rag');if(rag)rag.onclick=onRag;
   if(step<3)map();else language();
   if(step===1){host.querySelector('#ai-scene').insertAdjacentHTML('beforeend','<div id="label-bench"></div>');mountLabelBench(host.querySelector('#label-bench'));}
-  if(step===2){host.querySelector('#ai-scene').insertAdjacentHTML('beforeend','<div id="inbox-bench"></div>');mountInboxBench(host.querySelector('#inbox-bench'));}
+  if(step===2){host.querySelector('#ai-scene').insertAdjacentHTML('beforeend','<div id="inbox-bench"></div>');mountInboxBench(host.querySelector('#inbox-bench'));host.querySelector('#ai-scene').insertAdjacentHTML('beforeend','<div id="feature-twins"></div>');mountFeatureTwins(host.querySelector('#feature-twins'));}
  }
  function map(){
   const centres=fitCentres();

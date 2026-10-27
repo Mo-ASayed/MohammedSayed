@@ -1,4 +1,13 @@
 .map-quest { margin: 20px 0 36px; }
+.question-lab { margin:24px 0; padding:20px; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
+.question-lab>label { display:block; font-weight:600; margin-bottom:10px; }
+.question-lab select { width:100%; min-width:0; max-width:100%; padding:12px; font:inherit; color:inherit; background:var(--bg); border:1px solid var(--line); border-radius:6px; }
+.question-lab>div { display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:12px; }
+.question-lab p { font-size:13px; line-height:1.7; margin:12px 0; }
+.question-lab small { display:block; color:var(--muted); line-height:1.6; }
+.question-lab button:disabled { opacity:.5; cursor:default; }
+#answer-state { display:block; margin-top:12px; font-size:13px; }
+.quest-answer .answer-reason { font:12px/1.7 system-ui,sans-serif; border-top:1px solid var(--line); padding-top:12px; color:var(--muted); }
 .quest-top { display:flex; justify-content:space-between; gap:12px; font-size:12px; color:var(--muted); }
 .quest-route { display:flex; max-width:420px; margin:24px 0; }
 .quest-route>span { flex:1; border-top:3px solid var(--line); padding-top:12px; color:var(--muted); font:20px Georgia,serif; }

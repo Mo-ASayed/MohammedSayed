@@ -13,8 +13,8 @@ try{
  await page.locator('#quest-hint').click();assert.match(await page.locator('#quest-nudge').innerText(),/passage 1/);
  await page.locator('#quest-hint').click();assert.match(await page.locator('#quest-nudge').innerText(),/Shrink/);
  await page.locator('[data-source="1"]').focus();assert.match(await page.locator('#quest-inspect').innerText(),/overhead locker/);
- await tapMap(20,30);assert.equal(Math.round(parseFloat(await page.locator('#quest-query').evaluate(e=>e.style.left))),20);
- await page.locator('#quest-undo').click();assert.equal(await page.locator('#quest-query').evaluate(e=>e.style.left),'50%');
+ await tapMap(15,15);assert.equal(Math.round(parseFloat(await page.locator('#quest-query').evaluate(e=>e.style.left))),15);
+ await page.locator('#quest-undo').click();assert.equal(await page.locator('#quest-query').evaluate(e=>e.style.left),'20%');
  await click(page,'#pin-setup');await page.locator('#quest-reach').fill('12');assert.ok(await page.locator('#setup-comparison tr.changed').count()>0);
  await tapMap(20,30);await page.locator('#quest-check').click();assert.match(await page.locator('#quest-status').innerText(),/Solved/);
  await page.locator('#quest-next').click();await tapMap(20,30);await page.locator('#quest-reach').fill('12');await page.locator('#quest-filter').check();await page.locator('#quest-check').click();await page.locator('#quest-next').click();

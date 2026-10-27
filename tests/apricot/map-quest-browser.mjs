@@ -14,6 +14,26 @@ async function reach(n){await page.locator('#quest-reach').fill(String(n));}
 try{
  await mkdir('test-results',{recursive:true});await page.goto(url+'#rag');await page.locator('#open-map').click();
  assert.equal(await page.locator('.original-search').getAttribute('open'),null);
+ assert.match(await page.locator('#quest-answer').innerText(),/8 kg/);
+ for(const [id,answer] of [['flight-refund','24 hours'],['seats','before paying'],['check-in','15:00'],['hotel-refund','48 hours'],['dinner','Vegetarian'],['pets','No supplied passage']]){
+  await page.locator('#map-question').selectOption(id);
+  assert.ok((await page.locator('#quest-answer').innerText()).includes(answer),id);
+  const position=await page.locator('#quest-query').getAttribute('style');
+  const text=await page.locator('#active-question').innerText();
+  await page.locator('#question-rephrase').click();
+  assert.notEqual(await page.locator('#active-question').innerText(),text);
+  assert.equal(await page.locator('#quest-query').getAttribute('style'),position);
+  assert.ok((await page.locator('#quest-answer').innerText()).includes(answer),id+' paraphrase');
+ }
+ await page.locator('#quest-check').click();assert.match(await page.locator('#quest-status').innerText(),/different question/);
+ await page.locator('#map-question').selectOption('bags');
+ await drag('#quest-query',50,50);await reach(55);
+ assert.match(await page.locator('#quest-answer').innerText(),/do not answer/);
+ assert.match(await page.locator('#answer-reason').innerText(),/retrieved, but did not fit/);
+ assert.match(await page.locator('#query-mode').innerText(),/Manual position/);
+ await page.locator('#restore-question').click();assert.match(await page.locator('#quest-answer').innerText(),/8 kg/);
+ await page.locator('#quest-undo').click();assert.match(await page.locator('#query-mode').innerText(),/Manual position/);
+ await page.locator('#quest-reset').click();
  await page.locator('#quest-check').click();assert.equal(await page.locator('#quest-next').isVisible(),false);
  await drag('#quest-query',24,26);await reach(12);await page.locator('#quest-check').click();assert.match(await page.locator('#quest-status').innerText(),/Solved/);
  await page.locator('#quest-next').click();await drag('#quest-query',24,26);await reach(12);
@@ -25,8 +45,8 @@ try{
  await page.locator('#quest-next').click();await drag('#quest-query',78,51);await reach(8);
  await page.locator('#quest-check').click();assert.match(await page.locator('#quest-status').innerText(),/Solved/);assert.match(await page.locator('#quest-answer').innerText(),/48 hours/);
  await drag('[data-source="5"]',10,85);assert.match(await page.locator('#quest-answer').innerText(),/do not answer/);assert.equal(await page.locator('#quest-next').isVisible(),false);
- await page.locator('#quest-reset').click();assert.equal(await page.locator('#quest-query').evaluate(e=>e.style.left),'50%');
- await page.locator('#quest-query').focus();await page.keyboard.press('Shift+ArrowRight');assert.equal(await page.locator('#quest-query').evaluate(e=>e.style.left),'55%');
+ await page.locator('#quest-reset').click();assert.equal(await page.locator('#quest-query').evaluate(e=>e.style.left),'83%');
+ await page.locator('#quest-query').focus();await page.keyboard.press('Shift+ArrowRight');assert.equal(await page.locator('#quest-query').evaluate(e=>e.style.left),'88%');
  for(const width of [320,390,768]){await page.setViewportSize({width,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'overflow '+width);}
  await page.screenshot({path:'test-results/map-quest-mobile.png',fullPage:true});assert.deepEqual(errors,[]);
  console.log('PASS: map dragging, all layers, freshness, context budget, document movement, reset, keyboard and mobile.');

@@ -23,7 +23,7 @@ const metric=(label,value)=>`<div><span>${label}</span><strong>${value}</strong>
 export function mountVisualExperiments(host,initial=0){
  let selected=initial,started=false,timer=null;
  const fit={slope:1,offset:1,outlier:false,steps:0,trace:[],probe:2.5};
- const over={kind:'baseline',noise:1,reveal:false};
+ const over={kind:'baseline',noise:1,reveal:false,gaps:false};
  const language={temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null};
  const drift={kind:'inputs',shift:0,threshold:5,reveal:false};
  function stop(){if(timer){clearInterval(timer);timer=null;}}
@@ -32,7 +32,7 @@ export function mountVisualExperiments(host,initial=0){
   host.querySelectorAll('[data-experiment]').forEach(b=>b.onclick=()=>{selected=+b.dataset.experiment;started=false;render();host.querySelector('h1').focus();});
   if(!started){host.querySelector('#open-experiment').onclick=()=>{started=true;render();host.querySelector('#experiment-controls input, #experiment-controls button').focus({preventScroll:true});};return;}
   [fitLab,overLab,languageLab,driftLab][selected]();
-  host.querySelector('#reset-experiment').onclick=()=>{if(selected===0)Object.assign(fit,{slope:1,offset:1,outlier:false,steps:0,trace:[],probe:2.5});if(selected===1)Object.assign(over,{kind:'baseline',noise:1,reveal:false});if(selected===2)Object.assign(language,{temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null});if(selected===3)Object.assign(drift,{kind:'inputs',shift:0,threshold:5,reveal:false});render();host.querySelector('#reset-experiment').focus({preventScroll:true});};
+  host.querySelector('#reset-experiment').onclick=()=>{if(selected===0)Object.assign(fit,{slope:1,offset:1,outlier:false,steps:0,trace:[],probe:2.5});if(selected===1)Object.assign(over,{kind:'baseline',noise:1,reveal:false,gaps:false});if(selected===2)Object.assign(language,{temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null});if(selected===3)Object.assign(drift,{kind:'inputs',shift:0,threshold:5,reveal:false});render();host.querySelector('#reset-experiment').focus({preventScroll:true});};
  }
  const control=()=>host.querySelector('#experiment-controls');
  function value(id,v){host.querySelector('#'+id+'-value').textContent=v;}
@@ -58,15 +58,20 @@ export function mountVisualExperiments(host,initial=0){
   host.querySelector('#check-experiment').onclick=()=>feedback(fit.outlier?'Return to clean labels to try the original target. A changed label changes the best-fitting line.':lineLoss(fittingData(),fit.slope,fit.offset)<.2?'Solved. The line fits these examples well. That is training performance, not proof about new data.':'Keep adjusting or training. Watch the vertical gaps shrink, then check the error again.');draw();
  }
  function overLab(){
-  control().innerHTML=`<fieldset><legend>Model flexibility</legend><div class="model-choices">${[['baseline','Flat baseline'],['line','Fitted line'],['memorise','Flexible curve']].map(([id,name])=>`<button data-model="${id}" aria-pressed="${over.kind===id}">${name}</button>`).join('')}</div></fieldset>`+range('over-noise','Training noise',0,2,.25,over.noise)+`<button id="reveal-validation" class="secondary">${over.reveal?'Hide':'Reveal'} validation points</button><p>The validation set stays fixed as training noise changes. It was not used to fit any of these three models.</p><details class="experiment-detail"><summary>Compare all three models</summary><div id="over-comparison"></div></details>`;
+  control().innerHTML=`<fieldset><legend>Model flexibility</legend><div class="model-choices">${[['baseline','Flat baseline'],['line','Fitted line'],['memorise','Flexible curve']].map(([id,name])=>`<button data-model="${id}" aria-pressed="${over.kind===id}">${name}</button>`).join('')}</div></fieldset>`+range('over-noise','Training noise',0,2,.25,over.noise)+`<button id="reveal-validation" class="secondary">${over.reveal?'Hide':'Reveal'} validation points</button><p>The validation set stays fixed as training noise changes. It was not used to fit any of these three models.</p><label class="experiment-check"><input id="over-gaps" type="checkbox" ${over.gaps?'checked':''}> Show validation error gaps</label><p id="worst-validation"></p><details class="experiment-detail"><summary>Compare all three models</summary><div id="over-comparison"></div></details>`;
   const draw=()=>{const r=regression(over.kind,over.noise),x=v=>50+(v-1)*100,y=v=>300-v;
    const curve=Array.from({length:101},(_,i)=>{const v=1+i/20;return (i?'L':'M')+x(v)+' '+y(r.predict(v));}).join(' ');
    host.querySelector('#experiment-visual').innerHTML=svg(axes('Load (toy units)','Response time (toy ms)')+`<defs><clipPath id="over-clip"><rect x="50" y="25" width="520" height="275"/></clipPath></defs><g clip-path="url(#over-clip)"><path class="fitted-line" d="${curve}"/>`+r.train.map(p=>`<circle class="training-point" cx="${x(p.x)}" cy="${y(p.y)}" r="6"/>`).join('')+(over.reveal?r.validation.map(p=>`<path class="validation-point" d="M${x(p.x)-6} ${y(p.y)-6}l12 12m-12 0l12 -12"/>`).join(''):'')+'</g>'+[1,2,3,4,5,6].map(n=>`<text x="${x(n)}" y="319" text-anchor="middle">${n}</text>`).join(''),'Model curve with training points and optional held-out validation crosses')+'<p class="chart-legend">Orange dots: training &nbsp; / &nbsp; Green crosses: validation &nbsp; / &nbsp; Curve clipped at chart bounds</p>';
+   host.querySelector('#over-gaps').disabled=!over.reveal;
+   const worst=r.validation.reduce((a,b)=>Math.abs(a.y-r.predict(a.x))>Math.abs(b.y-r.predict(b.x))?a:b);
+   host.querySelector('#worst-validation').textContent=over.reveal?'Largest validation miss: '+Math.abs(worst.y-r.predict(worst.x)).toFixed(1)+' ms at load '+worst.x+'.':'Reveal validation points to inspect their errors.';
+   if(over.reveal&&over.gaps)host.querySelector('.experiment-chart').insertAdjacentHTML('beforeend','<g clip-path="url(#over-clip)">'+r.validation.map(p=>`<path class="validation-gap" d="M${x(p.x)} ${y(p.y)}V${y(r.predict(p.x))}"/>`).join('')+'</g>');
    host.querySelector('#over-comparison').innerHTML=modelComparison(over.noise,over.reveal,over.kind);
    metrics(metric('Training MAE',r.trainError.toFixed(1))+metric('Validation MAE',over.reveal?r.validationError.toFixed(1):'Reveal to see')+metric('MAE means','Average absolute error'));
    value('over-noise',over.noise);host.querySelectorAll('[data-model]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.model===over.kind)));
   };
   host.querySelectorAll('[data-model]').forEach(b=>b.onclick=()=>{over.kind=b.dataset.model;feedback('');draw();});host.querySelector('#over-noise').oninput=e=>{over.noise=+e.target.value;feedback('');draw();};
+  host.querySelector('#over-gaps').onchange=e=>{over.gaps=e.target.checked;draw();};
   host.querySelector('#reveal-validation').onclick=e=>{over.reveal=!over.reveal;e.target.textContent=(over.reveal?'Hide':'Reveal')+' validation points';draw();};
   host.querySelector('#check-experiment').onclick=()=>{const r=regression(over.kind,over.noise);feedback(!over.reveal?'Reveal the validation points first. Training error cannot answer this challenge.':over.noise<1?'Turn training noise back to at least 1 for this challenge.':r.validationError<6?'Solved. A simpler fitted line predicts these held-out points better than the memorising curve. Keep a final test set untouched.':'The fit to training points is not enough. Compare the validation error of the other models.');};draw();
  }

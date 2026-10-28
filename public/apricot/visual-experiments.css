@@ -71,3 +71,5 @@
 @media(prefers-reduced-motion:reduce){.word-bar-track>span{transition:none}}
 
 .loss-trace{margin:24px 0 0;border-top:1px solid var(--line);padding-top:16px}.loss-trace figcaption{display:flex;justify-content:space-between;font-size:12px}.loss-trace svg{width:100%;max-height:140px;display:block}.loss-trace text{font:11px system-ui;fill:var(--muted)}.loss-trace small{display:block;font-size:11px;line-height:1.7;color:var(--muted)}
+
+.probe-guide{stroke:#78634b;stroke-dasharray:3 4;fill:none}.inference-probe{fill:#fffdf8;stroke:#3c4442;stroke-width:3}

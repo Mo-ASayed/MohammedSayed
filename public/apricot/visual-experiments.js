@@ -1,3 +1,4 @@
+import {lossTrace} from './experiment-details.js';
 import {regression} from './engine.js';
 import {fittingData,predictLine,lineLoss,trainStep,words,wordProbabilities,sampleWord,seededTickets,driftBatch,scoreBatch,histogram} from './experiment-models.js';
 
@@ -21,7 +22,7 @@ const metric=(label,value)=>`<div><span>${label}</span><strong>${value}</strong>
 
 export function mountVisualExperiments(host,initial=0){
  let selected=initial,started=false,timer=null;
- const fit={slope:1,offset:1,outlier:false,steps:0};
+ const fit={slope:1,offset:1,outlier:false,steps:0,trace:[]};
  const over={kind:'baseline',noise:1,reveal:false};
  const language={temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null};
  const drift={kind:'inputs',shift:0,threshold:5,reveal:false};
@@ -31,7 +32,7 @@ export function mountVisualExperiments(host,initial=0){
   host.querySelectorAll('[data-experiment]').forEach(b=>b.onclick=()=>{selected=+b.dataset.experiment;started=false;render();host.querySelector('h1').focus();});
   if(!started){host.querySelector('#open-experiment').onclick=()=>{started=true;render();host.querySelector('#experiment-controls input, #experiment-controls button').focus({preventScroll:true});};return;}
   [fitLab,overLab,languageLab,driftLab][selected]();
-  host.querySelector('#reset-experiment').onclick=()=>{if(selected===0)Object.assign(fit,{slope:1,offset:1,outlier:false,steps:0});if(selected===1)Object.assign(over,{kind:'baseline',noise:1,reveal:false});if(selected===2)Object.assign(language,{temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null});if(selected===3)Object.assign(drift,{kind:'inputs',shift:0,threshold:5,reveal:false});render();host.querySelector('#reset-experiment').focus({preventScroll:true});};
+  host.querySelector('#reset-experiment').onclick=()=>{if(selected===0)Object.assign(fit,{slope:1,offset:1,outlier:false,steps:0,trace:[]});if(selected===1)Object.assign(over,{kind:'baseline',noise:1,reveal:false});if(selected===2)Object.assign(language,{temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null});if(selected===3)Object.assign(drift,{kind:'inputs',shift:0,threshold:5,reveal:false});render();host.querySelector('#reset-experiment').focus({preventScroll:true});};
  }
  const control=()=>host.querySelector('#experiment-controls');
  function value(id,v){host.querySelector('#'+id+'-value').textContent=v;}
@@ -39,14 +40,15 @@ export function mountVisualExperiments(host,initial=0){
  function metrics(html){host.querySelector('#experiment-metrics').innerHTML=html;}
  function fitLab(){
   control().innerHTML=range('fit-slope','Rise over 5 load units',-2,12,.05,fit.slope)+range('fit-offset','Starting height',-2,8,.05,fit.offset)+`<label class="experiment-check"><input id="fit-outlier" type="checkbox" ${fit.outlier?'checked':''}> Change one training label</label><p>Turn the last response-time label from 7.8 into 2. The input stays the same. Does the learned line still make sense?</p><button id="fit-step" class="secondary">Train one step</button><button id="fit-run" class="secondary">Watch 12 training steps</button><p id="fit-step-count"></p>`;
-  const draw=()=>{const data=fittingData(fit.outlier),x=v=>50+v*100,y=v=>300-v*25;
+  const draw=()=>{const data=fittingData(fit.outlier);if(!fit.trace.length)fit.trace.push(lineLoss(data,fit.slope,fit.offset));const x=v=>50+v*100,y=v=>300-v*25;
    host.querySelector('#experiment-visual').innerHTML=svg(axes('Load (scaled units)','Response time (scaled units)',25)+`<defs><clipPath id="fit-clip"><rect x="50" y="25" width="520" height="275"/></clipPath></defs><g clip-path="url(#fit-clip)"><path class="fitted-line" d="M${x(0)} ${y(predictLine(0,fit.slope,fit.offset))}L${x(5)} ${y(predictLine(5,fit.slope,fit.offset))}"/>`+data.map(p=>`<path class="residual" d="M${x(p.x)} ${y(p.y)}V${y(predictLine(p.x,fit.slope,fit.offset))}"/><circle class="training-point" cx="${x(p.x)}" cy="${y(p.y)}" r="6"/>`).join('')+`</g>${data.map(p=>`<text x="${x(p.x)}" y="319" text-anchor="middle">${p.x}</text>`).join('')}`,'Training points, a prediction line and vertical error gaps')+'<p class="chart-legend">Orange dots: examples &nbsp; / &nbsp; Blue line: predictions &nbsp; / &nbsp; Dashed gaps: errors</p>';
+   host.querySelector('#experiment-visual').insertAdjacentHTML('beforeend',lossTrace(fit.trace));
    metrics(metric('Mean squared error',lineLoss(data,fit.slope,fit.offset).toFixed(3))+metric('Rise across chart',fit.slope.toFixed(2))+metric('Starting height',fit.offset.toFixed(2)));
    for(const id of ['slope','offset']){host.querySelector('#fit-'+id).value=fit[id];value('fit-'+id,fit[id].toFixed(2));}host.querySelector('#fit-step-count').textContent=fit.steps+' training steps. The loss is the average squared prediction error.';
   };
-  for(const id of ['slope','offset'])host.querySelector('#fit-'+id).oninput=e=>{stop();host.querySelector('#fit-run').disabled=false;fit[id]=+e.target.value;feedback('');draw();};
-  host.querySelector('#fit-outlier').onchange=e=>{stop();host.querySelector('#fit-run').disabled=false;fit.outlier=e.target.checked;feedback('Data changed. The line stays fixed until you adjust it or train again.');draw();};
-  const step=()=>{Object.assign(fit,trainStep(fittingData(fit.outlier),fit.slope,fit.offset));fit.steps++;draw();};
+  for(const id of ['slope','offset'])host.querySelector('#fit-'+id).oninput=e=>{stop();host.querySelector('#fit-run').disabled=false;fit[id]=+e.target.value;fit.trace=[];fit.steps=0;feedback('');draw();};
+  host.querySelector('#fit-outlier').onchange=e=>{stop();host.querySelector('#fit-run').disabled=false;fit.outlier=e.target.checked;fit.trace=[];fit.steps=0;feedback('Data changed. The line stays fixed until you adjust it or train again.');draw();};
+  const step=()=>{Object.assign(fit,trainStep(fittingData(fit.outlier),fit.slope,fit.offset));fit.steps++;fit.trace.push(lineLoss(fittingData(fit.outlier),fit.slope,fit.offset));if(fit.trace.length>201)fit.trace.shift();draw();};
   host.querySelector('#fit-step').onclick=()=>{feedback('');step();};
   host.querySelector('#fit-run').onclick=()=>{stop();feedback('');const button=host.querySelector('#fit-run');button.disabled=true;let left=12;if(matchMedia('(prefers-reduced-motion: reduce)').matches){while(left--)step();button.disabled=false;return;}timer=setInterval(()=>{if(!host.isConnected){stop();return;}step();if(--left===0){stop();button.disabled=false;}},140);};
   host.querySelector('#check-experiment').onclick=()=>feedback(fit.outlier?'Return to clean labels to try the original target. A changed label changes the best-fitting line.':lineLoss(fittingData(),fit.slope,fit.offset)<.2?'Solved. The line fits these examples well. That is training performance, not proof about new data.':'Keep adjusting or training. Watch the vertical gaps shrink, then check the error again.');draw();

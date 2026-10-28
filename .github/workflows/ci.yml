@@ -60,6 +60,7 @@ jobs:
           node tests/apricot/refinements-browser.mjs
           node tests/apricot/usability-browser.mjs
           node tests/apricot/visual-experiments-browser.mjs
+          node tests/apricot/experiment-details-browser.mjs
 
       - name: Save browser evidence
         if: always()

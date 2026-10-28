@@ -1,4 +1,5 @@
 import {regression} from './engine.js';
+export const errorCost=(scores,missCost)=>scores.fp+scores.fn*missCost;
 export function requestOutcomes(data,threshold,reveal){return data.map((p,i)=>{
  const prediction=p.x>=threshold;
  const kind=!reveal?'unknown':prediction?(p.label?'tp':'fp'):(p.label?'fn':'tn');

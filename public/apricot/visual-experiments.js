@@ -1,4 +1,4 @@
-import {lossTrace} from './experiment-details.js';
+import {lossTrace,modelComparison} from './experiment-details.js';
 import {regression} from './engine.js';
 import {fittingData,predictLine,lineLoss,trainStep,words,wordProbabilities,sampleWord,seededTickets,driftBatch,scoreBatch,histogram} from './experiment-models.js';
 
@@ -58,10 +58,11 @@ export function mountVisualExperiments(host,initial=0){
   host.querySelector('#check-experiment').onclick=()=>feedback(fit.outlier?'Return to clean labels to try the original target. A changed label changes the best-fitting line.':lineLoss(fittingData(),fit.slope,fit.offset)<.2?'Solved. The line fits these examples well. That is training performance, not proof about new data.':'Keep adjusting or training. Watch the vertical gaps shrink, then check the error again.');draw();
  }
  function overLab(){
-  control().innerHTML=`<fieldset><legend>Model flexibility</legend><div class="model-choices">${[['baseline','Flat baseline'],['line','Fitted line'],['memorise','Flexible curve']].map(([id,name])=>`<button data-model="${id}" aria-pressed="${over.kind===id}">${name}</button>`).join('')}</div></fieldset>`+range('over-noise','Training noise',0,2,.25,over.noise)+`<button id="reveal-validation" class="secondary">${over.reveal?'Hide':'Reveal'} validation points</button><p>The validation set stays fixed as training noise changes. It was not used to fit any of these three models.</p>`;
+  control().innerHTML=`<fieldset><legend>Model flexibility</legend><div class="model-choices">${[['baseline','Flat baseline'],['line','Fitted line'],['memorise','Flexible curve']].map(([id,name])=>`<button data-model="${id}" aria-pressed="${over.kind===id}">${name}</button>`).join('')}</div></fieldset>`+range('over-noise','Training noise',0,2,.25,over.noise)+`<button id="reveal-validation" class="secondary">${over.reveal?'Hide':'Reveal'} validation points</button><p>The validation set stays fixed as training noise changes. It was not used to fit any of these three models.</p><details class="experiment-detail"><summary>Compare all three models</summary><div id="over-comparison"></div></details>`;
   const draw=()=>{const r=regression(over.kind,over.noise),x=v=>50+(v-1)*100,y=v=>300-v;
    const curve=Array.from({length:101},(_,i)=>{const v=1+i/20;return (i?'L':'M')+x(v)+' '+y(r.predict(v));}).join(' ');
    host.querySelector('#experiment-visual').innerHTML=svg(axes('Load (toy units)','Response time (toy ms)')+`<defs><clipPath id="over-clip"><rect x="50" y="25" width="520" height="275"/></clipPath></defs><g clip-path="url(#over-clip)"><path class="fitted-line" d="${curve}"/>`+r.train.map(p=>`<circle class="training-point" cx="${x(p.x)}" cy="${y(p.y)}" r="6"/>`).join('')+(over.reveal?r.validation.map(p=>`<path class="validation-point" d="M${x(p.x)-6} ${y(p.y)-6}l12 12m-12 0l12 -12"/>`).join(''):'')+'</g>'+[1,2,3,4,5,6].map(n=>`<text x="${x(n)}" y="319" text-anchor="middle">${n}</text>`).join(''),'Model curve with training points and optional held-out validation crosses')+'<p class="chart-legend">Orange dots: training &nbsp; / &nbsp; Green crosses: validation &nbsp; / &nbsp; Curve clipped at chart bounds</p>';
+   host.querySelector('#over-comparison').innerHTML=modelComparison(over.noise,over.reveal,over.kind);
    metrics(metric('Training MAE',r.trainError.toFixed(1))+metric('Validation MAE',over.reveal?r.validationError.toFixed(1):'Reveal to see')+metric('MAE means','Average absolute error'));
    value('over-noise',over.noise);host.querySelectorAll('[data-model]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.model===over.kind)));
   };

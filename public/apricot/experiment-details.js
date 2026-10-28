@@ -1,4 +1,10 @@
 import {regression} from './engine.js';
+export function requestOutcomes(data,threshold,reveal){return data.map((p,i)=>{
+ const prediction=p.x>=threshold;
+ const kind=!reveal?'unknown':prediction?(p.label?'tp':'fp'):(p.label?'fn':'tn');
+ const names={unknown:'Outcome hidden',tp:'Correct alert',fp:'False alarm',fn:'Missed alert',tn:'Correct non-alert'};
+ return {id:i+1,kind,symbol:kind==='unknown'?'?':kind.toUpperCase(),description:'Request '+(i+1)+'. Input '+p.x.toFixed(2)+'. Predicted '+(prediction?'alert':'no alert')+'. '+names[kind]+'.'};
+});}
 export function modelComparison(noise,reveal,selected){
  return '<table class="experiment-table"><caption>Same data. Three different fits. Errors in toy milliseconds.</caption><thead><tr><th>Model</th><th>Training MAE</th><th>Validation MAE</th></tr></thead><tbody>'+[['baseline','Flat baseline'],['line','Fitted line'],['memorise','Flexible curve']].map(([id,name])=>{const r=regression(id,noise);return '<tr class="'+(id===selected?'selected-model':'')+'"><th scope="row">'+name+(id===selected?' (shown)':'')+'</th><td>'+r.trainError.toFixed(1)+'</td><td>'+(reveal?r.validationError.toFixed(1):'Hidden')+'</td></tr>';}).join('')+'</tbody></table>';
 }

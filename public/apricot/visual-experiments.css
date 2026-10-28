@@ -79,3 +79,5 @@
 .validation-gap{fill:none;stroke:#547343;stroke-width:2;stroke-dasharray:4 3}
 
 .observed-word{grid-column:2/-1;display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:center}.observed-word>div{height:7px;background:#e8ece7;border-radius:2px;overflow:hidden}.observed-word>div>span{display:block;height:100%;background:#547e85}.observed-word em{font:10px system-ui;color:var(--muted)}
+
+.request-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin-top:16px}.request-grid button{font:10px system-ui;padding:10px 0;border:1px solid #b5aa97;border-radius:4px;color:#463b2c;background:#eee6d8;cursor:pointer}.request-grid .request-tp,.request-grid .request-tn{background:#e1ead8;border-color:#8c9b76}.request-grid .request-fp,.request-grid .request-fn{background:#f2d5c5;border-color:#ad7657}.request-grid button:focus-visible{outline:2px solid #305d66;outline-offset:2px}

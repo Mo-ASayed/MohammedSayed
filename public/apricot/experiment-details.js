@@ -1,4 +1,6 @@
 import {regression} from './engine.js';
+import {predictLine} from './experiment-models.js';
+export function fitDataTable(data,slope,offset){return '<table class="experiment-table"><caption>Squared error is (prediction minus label) squared. MSE averages this last column.</caption><thead><tr><th>Load</th><th>Label</th><th>Prediction</th><th>Squared error</th></tr></thead><tbody>'+data.map(p=>{const guess=predictLine(p.x,slope,offset);return '<tr><th scope="row">'+p.x+'</th><td>'+p.y.toFixed(2)+'</td><td>'+guess.toFixed(2)+'</td><td>'+((guess-p.y)**2).toFixed(3)+'</td></tr>';}).join('')+'</tbody></table>';}
 export const errorCost=(scores,missCost)=>scores.fp+scores.fn*missCost;
 export function requestOutcomes(data,threshold,reveal){return data.map((p,i)=>{
  const prediction=p.x>=threshold;

@@ -9,7 +9,7 @@ async function open(i){await page.locator('[data-experiment="'+i+'"]').click();a
 async function mobile(){for(const width of [320,390,768]){await page.setViewportSize({width,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'overflow '+width);}await page.setViewportSize({width:1440,height:1000});}
 try{
  await mkdir('test-results',{recursive:true});await page.goto(base);
- await page.locator('[data-experiment-start="0"]').click();assert.match(page.url(),/#experiments$/);
+ await page.locator('[data-experiment-start="0"]').click();assert.match(page.url(),/#experiments\/fit$/);
  assert.equal(await page.locator('#experiment-controls').count(),0);await page.locator('#open-experiment').click();
  const loss=()=>page.locator('#experiment-metrics strong').first().innerText().then(Number);
  const initial=await loss();await page.locator('#fit-run').click();assert.ok(await loss()<initial);

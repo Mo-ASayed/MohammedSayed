@@ -1,3 +1,4 @@
+export const experimentSlugs=['fit','overfitting','sampling','drift'];
 import {lossTrace,modelComparison,requestOutcomes,errorCost} from './experiment-details.js';
 import {regression} from './engine.js';
 import {fittingData,predictLine,lineLoss,trainStep,words,wordProbabilities,sampleWord,seededTickets,driftBatch,scoreBatch,histogram} from './experiment-models.js';
@@ -14,13 +15,13 @@ const miniDrawings=[
  '<path d="M15 65V15M40 65V30M65 65V43M90 65V55M115 65V61" stroke-width="12"/>',
  '<path d="M15 65V45M35 65V15M55 65V28M75 65V50M95 65V59" stroke-width="12"/><path class="secondary-line" d="M15 35H115"/>'
 ];
-export function experimentsTeaser(){return `<section class="experiments-teaser"><span class="eyebrow">MORE WAYS TO SEE IT</span><h2>Move it. Break it. Make sense of it.</h2><p>Four small experiments beyond retrieval. Each starts with one idea, then gives you the controls.</p><div class="experiment-tiles">${labs.map((l,i)=>`<a href="#experiments" data-page="experiments" data-experiment-start="${i}"><svg viewBox="0 0 130 80" aria-hidden="true">${miniDrawings[i]}</svg><strong>${l.name}</strong><span>${['Shrink the prediction errors','Test a perfect-looking curve','See probability become a word','Find a silent model failure'][i]}</span></a>`).join('')}</div></section>`;}
+export function experimentsTeaser(){return `<section class="experiments-teaser"><span class="eyebrow">MORE WAYS TO SEE IT</span><h2>Move it. Break it. Make sense of it.</h2><p>Four small experiments beyond retrieval. Each starts with one idea, then gives you the controls.</p><div class="experiment-tiles">${labs.map((l,i)=>`<a href="#experiments/${experimentSlugs[i]}" data-page="experiments" data-experiment-start="${i}"><svg viewBox="0 0 130 80" aria-hidden="true">${miniDrawings[i]}</svg><strong>${l.name}</strong><span>${['Shrink the prediction errors','Test a perfect-looking curve','See probability become a word','Find a silent model failure'][i]}</span></a>`).join('')}</div></section>`;}
 const range=(id,label,min,max,step,value)=>`<label for="${id}">${label} <output id="${id}-value">${value}</output></label><input id="${id}" type="range" min="${min}" max="${max}" step="${step}" value="${value}">`;
 const svg=(content,label)=>`<svg class="experiment-chart" viewBox="0 0 600 350" role="img" aria-label="${label}">${content}</svg>`;
 const axes=(xlabel,ylabel,scale=1,spacing=50)=>`<path class="chart-axis" d="M50 25V300H570"/><text x="310" y="340" text-anchor="middle">${xlabel}</text><text x="50" y="16">${ylabel}</text>${[0,1,2,3,4,5].map(i=>`<path class="chart-grid" d="M50 ${300-i*spacing}H570"/><text x="42" y="${304-i*spacing}" text-anchor="end">${i*spacing/scale}</text>`).join('')}`;
 const metric=(label,value)=>`<div><span>${label}</span><strong>${value}</strong></div>`;
 
-export function mountVisualExperiments(host,initial=0){
+export function mountVisualExperiments(host,initial=0,onSelect=()=>{}){
  let selected=initial,started=false,timer=null;
  const fit={slope:1,offset:1,outlier:false,steps:0,trace:[],probe:2.5};
  const over={kind:'baseline',noise:1,reveal:false,gaps:false};
@@ -29,7 +30,7 @@ export function mountVisualExperiments(host,initial=0){
  function stop(){if(timer){clearInterval(timer);timer=null;}}
  function render(){stop();const l=labs[selected];
   host.innerHTML=`<section class="visual-experiments"><span class="eyebrow">MY VISUAL EXPERIMENTS / ${selected+1} OF 4</span><h1 tabindex="-1">${l.title}</h1><nav class="experiment-picker" aria-label="Choose an experiment">${labs.map((x,i)=>`<button data-experiment="${i}" aria-current="${i===selected}">${i+1}. ${x.name}</button>`).join('')}</nav><p class="experiment-intro">${l.intro}</p><div class="experiment-primer"><strong>What to look for</strong><p>${l.notice}</p>${!started?'<button id="open-experiment" class="primary">Let me try it &rarr;</button>':''}</div>${started?'<div class="experiment-desk"><div id="experiment-visual"></div><div class="experiment-controls" id="experiment-controls"></div></div><div class="experiment-metrics" id="experiment-metrics" aria-live="polite"></div><div class="experiment-challenge"><strong>Try this</strong><p>'+l.goal+'</p><button id="check-experiment" class="primary">Check my experiment</button><button id="reset-experiment" class="secondary">Reset this experiment</button><p id="experiment-feedback" role="status"></p></div>':''}<p class="experiment-limits">${l.caveat}</p></section>`;
-  host.querySelectorAll('[data-experiment]').forEach(b=>b.onclick=()=>{selected=+b.dataset.experiment;started=false;render();host.querySelector('h1').focus();});
+  host.querySelectorAll('[data-experiment]').forEach(b=>b.onclick=()=>{selected=+b.dataset.experiment;onSelect(selected);started=false;render();host.querySelector('h1').focus();});
   if(!started){host.querySelector('#open-experiment').onclick=()=>{started=true;render();host.querySelector('#experiment-controls input, #experiment-controls button').focus({preventScroll:true});};return;}
   [fitLab,overLab,languageLab,driftLab][selected]();
   host.querySelector('#reset-experiment').onclick=()=>{if(selected===0)Object.assign(fit,{slope:1,offset:1,outlier:false,steps:0,trace:[],probe:2.5});if(selected===1)Object.assign(over,{kind:'baseline',noise:1,reveal:false,gaps:false});if(selected===2)Object.assign(language,{temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null,greedy:false});if(selected===3)Object.assign(drift,{kind:'inputs',shift:0,threshold:5,reveal:false,request:null,missCost:5});render();host.querySelector('#reset-experiment').focus({preventScroll:true});};

@@ -1,6 +1,7 @@
 export const fitPoints=[{x:0,y:1.2},{x:1,y:2.1},{x:2,y:4},{x:3,y:4.9},{x:4,y:6.8},{x:5,y:7.8}];
 export function fittingData(outlier=false){return fitPoints.map((p,i)=>({...p,y:outlier&&i===5?2:p.y}));}
 export const predictLine=(x,slope,offset)=>offset+slope*x/5;
+export function bestFit(data){const mx=data.reduce((s,p)=>s+p.x/5,0)/data.length,my=data.reduce((s,p)=>s+p.y,0)/data.length;const slope=data.reduce((s,p)=>s+(p.x/5-mx)*(p.y-my),0)/data.reduce((s,p)=>s+(p.x/5-mx)**2,0);return {slope,offset:my-slope*mx};}
 export function lineLoss(data,slope,offset){return data.reduce((sum,p)=>sum+(predictLine(p.x,slope,offset)-p.y)**2,0)/data.length;}
 export function trainStep(data,slope,offset){
  let dm=0,db=0;

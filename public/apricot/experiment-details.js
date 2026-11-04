@@ -1,5 +1,11 @@
 import {regression} from './engine.js';
 import {predictLine} from './experiment-models.js';
+export function experimentGlossary(index){const terms=[
+ [['Parameter','A learned model value. Here the line has two: its rise and starting height.'],['Loss','The number training tries to reduce. Here it is mean squared prediction error.'],['Inference','Using the current model to predict for an input, without updating its parameters.']],
+ [['Training set','The examples used to fit the model.'],['Validation set','Separate examples used to compare models and settings. Repeated tuning can overfit this set too.'],['Generalisation','How well a model works on new data from the situation where it will be used.']],
+ [['Token','A unit of text a language model processes. It may be a word, part of a word or punctuation. This toy uses whole words.'],['Temperature','A setting that changes how concentrated the candidate probabilities are.'],['Greedy decoding','Choosing the highest-scoring next token instead of drawing a random sample.']],
+ [['Input drift','The distribution of incoming inputs changes. This alone does not prove model quality fell.'],['Concept drift','The relationship between inputs and outcomes changes.'],['Ground truth','The measured or reviewed outcome used to judge a prediction. Labels can themselves be late or wrong.']]
+ ];return '<details class="experiment-glossary"><summary>Three terms used here</summary><dl>'+terms[index].map(([term,meaning])=>'<div><dt>'+term+'</dt><dd>'+meaning+'</dd></div>').join('')+'</dl></details>';}
 export function fitDataTable(data,slope,offset){return '<table class="experiment-table"><caption>Squared error is (prediction minus label) squared. MSE averages this last column.</caption><thead><tr><th>Load</th><th>Label</th><th>Prediction</th><th>Squared error</th></tr></thead><tbody>'+data.map(p=>{const guess=predictLine(p.x,slope,offset);return '<tr><th scope="row">'+p.x+'</th><td>'+p.y.toFixed(2)+'</td><td>'+guess.toFixed(2)+'</td><td>'+((guess-p.y)**2).toFixed(3)+'</td></tr>';}).join('')+'</tbody></table>';}
 export const errorCost=(scores,missCost)=>scores.fp+scores.fn*missCost;
 export function requestOutcomes(data,threshold,reveal){return data.map((p,i)=>{

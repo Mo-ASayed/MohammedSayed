@@ -10,9 +10,11 @@ export function trainStep(data,slope,offset){
 }
 export const words=['quiet','sunny','cold','purple','triangular'];
 const logits=[3,2.5,2,1,.2];
-export function wordProbabilities(temperature=1,k=5){
+export function wordProbabilities(temperature=1,k=5,mass=1){
  const weights=logits.map((l,i)=>i<k?Math.exp((l-logits[0])/temperature):0),total=weights.reduce((a,b)=>a+b,0);
- return weights.map(w=>w/total);
+ const probabilities=weights.map(w=>w/total);let cumulative=0;
+ const retained=probabilities.map(p=>{if(cumulative>=mass-1e-12)return 0;cumulative+=p;return p;});
+ const sum=retained.reduce((a,b)=>a+b,0);return retained.map(p=>p/sum);
 }
 export function sampleWord(probabilities,ticket){let cumulative=0;for(let i=0;i<probabilities.length;i++){cumulative+=probabilities[i];if(ticket<cumulative)return i;}return probabilities.findLastIndex(p=>p>0);}
 export function nextTicket(state){const next=(Math.imul(1664525,state)+1013904223)>>>0;return {state:next,ticket:next/4294967296};}

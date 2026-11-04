@@ -15,7 +15,8 @@ export function wordProbabilities(temperature=1,k=5){
  return weights.map(w=>w/total);
 }
 export function sampleWord(probabilities,ticket){let cumulative=0;for(let i=0;i<probabilities.length;i++){cumulative+=probabilities[i];if(ticket<cumulative)return i;}return probabilities.findLastIndex(p=>p>0);}
-export function seededTickets(count,seed=731){let value=seed;return Array.from({length:count},()=>{value=(Math.imul(1664525,value)+1013904223)>>>0;return value/4294967296;});}
+export function nextTicket(state){const next=(Math.imul(1664525,state)+1013904223)>>>0;return {state:next,ticket:next/4294967296};}
+export function seededTickets(count,seed=731){let state=seed;return Array.from({length:count},()=>{const next=nextTicket(state);state=next.state;return next.ticket;});}
 export const referenceInputs=Array.from({length:40},(_,i)=>.3+i*.24);
 export function driftBatch(kind,shift){return referenceInputs.map(x=>{const input=kind==='inputs'?x+shift:x;return {x:input,label:input>=(kind==='rule'?5+shift:5)?1:0};});}
 export function scoreBatch(data,threshold=5){let tp=0,tn=0,fp=0,fn=0;for(const p of data){const positive=p.x>=threshold;if(positive&&p.label)tp++;else if(positive)fp++;else if(p.label)fn++;else tn++;}return {tp,tn,fp,fn,accuracy:(tp+tn)/data.length};}

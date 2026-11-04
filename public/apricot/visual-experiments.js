@@ -1,7 +1,7 @@
 export const experimentSlugs=['fit','overfitting','sampling','drift'];
 import {lossTrace,fitDataTable,modelComparison,requestOutcomes,errorCost} from './experiment-details.js';
 import {regression} from './engine.js';
-import {fittingData,bestFit,predictLine,lineLoss,trainStep,words,wordProbabilities,sampleWord,seededTickets,driftBatch,scoreBatch,histogram} from './experiment-models.js';
+import {fittingData,bestFit,predictLine,lineLoss,trainStep,words,wordProbabilities,sampleWord,nextTicket,driftBatch,scoreBatch,histogram} from './experiment-models.js';
 
 const labs=[
  {name:'Fit a line',title:'What does training actually change?',intro:'A model turns inputs into predictions. Here, a line predicts a fictional service response time from its load. Training changes the slope and starting height to reduce prediction errors.',notice:'The vertical gaps are mistakes. Training tries to shrink their squared sizes, not to understand what a server is.',goal:'Reduce mean squared error below 0.20 with the clean data.',caveat:'A two-parameter linear model with six invented examples. The load and response values are scaled for this drawing.'},
@@ -25,7 +25,7 @@ export function mountVisualExperiments(host,initial=0,onSelect=()=>{}){
  let selected=initial,started=false,timer=null;
  const fit={slope:1,offset:1,outlier:false,steps:0,trace:[],probe:2.5,pinned:null,reference:false};
  const over={kind:'baseline',noise:1,reveal:false,gaps:false};
- const language={temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null,greedy:false};
+ const language={temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null,greedy:false,rng:731};
  const drift={kind:'inputs',shift:0,threshold:5,reveal:false,request:null,missCost:5};
  function stop(){if(timer){clearInterval(timer);timer=null;}const run=host.querySelector('#fit-run'),pause=host.querySelector('#fit-pause'),step=host.querySelector('#fit-step');if(run)run.disabled=false;if(pause)pause.disabled=true;if(step)step.disabled=false;}
  function render(){stop();const l=labs[selected];
@@ -35,7 +35,7 @@ export function mountVisualExperiments(host,initial=0,onSelect=()=>{}){
   host.querySelector('#previous-experiment').onclick=()=>moveTo(Math.max(0,selected-1));host.querySelector('#next-experiment').onclick=()=>moveTo((selected+1)%labs.length);
   if(!started){host.querySelector('#open-experiment').onclick=()=>{started=true;render();host.querySelector('#experiment-controls input, #experiment-controls button').focus({preventScroll:true});};return;}
   [fitLab,overLab,languageLab,driftLab][selected]();
-  host.querySelector('#reset-experiment').onclick=()=>{if(selected===0)Object.assign(fit,{slope:1,offset:1,outlier:false,steps:0,trace:[],probe:2.5,pinned:null,reference:false});if(selected===1)Object.assign(over,{kind:'baseline',noise:1,reveal:false,gaps:false});if(selected===2)Object.assign(language,{temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null,greedy:false});if(selected===3)Object.assign(drift,{kind:'inputs',shift:0,threshold:5,reveal:false,request:null,missCost:5});render();host.querySelector('#reset-experiment').focus({preventScroll:true});};
+  host.querySelector('#reset-experiment').onclick=()=>{if(selected===0)Object.assign(fit,{slope:1,offset:1,outlier:false,steps:0,trace:[],probe:2.5,pinned:null,reference:false});if(selected===1)Object.assign(over,{kind:'baseline',noise:1,reveal:false,gaps:false});if(selected===2)Object.assign(language,{temperature:1,k:5,counts:Array(5).fill(0),draws:0,last:null,ticket:null,greedy:false,rng:731});if(selected===3)Object.assign(drift,{kind:'inputs',shift:0,threshold:5,reveal:false,request:null,missCost:5});render();host.querySelector('#reset-experiment').focus({preventScroll:true});};
  }
  const control=()=>host.querySelector('#experiment-controls');
  function value(id,v){host.querySelector('#'+id+'-value').textContent=v;}
@@ -94,8 +94,8 @@ export function mountVisualExperiments(host,initial=0,onSelect=()=>{}){
    host.querySelector('#greedy-result').textContent=language.greedy?'Greedy choice: '+words[probabilities.indexOf(Math.max(...probabilities))]+'. It selects the highest probability every time for this fixed prompt. Positive temperature changes the probabilities, not their ranking here. This comparison does not add a random sample.':'';
    metrics(metric('Samples drawn',language.draws)+metric('Different words seen',language.counts.filter(n=>n>0).length)+metric('Most likely word',words[probabilities.indexOf(Math.max(...probabilities))]));value('word-temperature',language.temperature.toFixed(1));value('word-k',language.k);
   };
-  for(const [id,key] of [['word-temperature','temperature'],['word-k','k']])host.querySelector('#'+id).oninput=e=>{language[key]=+e.target.value;Object.assign(language,{counts:Array(5).fill(0),draws:0,last:null,ticket:null,greedy:false});feedback('');draw();};
-  const sample=count=>{const p=wordProbabilities(language.temperature,language.k),tickets=seededTickets(language.draws+count);for(let i=language.draws;i<tickets.length;i++){language.ticket=tickets[i];language.last=sampleWord(p,tickets[i]);language.counts[language.last]++;}language.draws+=count;feedback('');draw();};
+  for(const [id,key] of [['word-temperature','temperature'],['word-k','k']])host.querySelector('#'+id).oninput=e=>{language[key]=+e.target.value;Object.assign(language,{counts:Array(5).fill(0),draws:0,last:null,ticket:null,greedy:false,rng:731});feedback('');draw();};
+  const sample=count=>{const p=wordProbabilities(language.temperature,language.k);for(let i=0;i<count;i++){const next=nextTicket(language.rng);language.rng=next.state;language.ticket=next.ticket;language.last=sampleWord(p,next.ticket);language.counts[language.last]++;}language.draws+=count;feedback('');draw();};
   host.querySelector('#compare-greedy').onclick=()=>{language.greedy=true;draw();};
   host.querySelector('#draw-word').onclick=()=>sample(1);host.querySelector('#draw-batch').onclick=()=>sample(200);
   host.querySelector('#check-experiment').onclick=()=>feedback(language.k===2&&language.draws>=200?'Solved. Top-k removed the other candidates and renormalised the remaining probabilities. Sample counts approximate those probabilities; they need not match exactly.':'Keep the top 2 candidates, then draw at least 200 samples. Temperature alone makes rare words less likely; it does not remove them.');draw();

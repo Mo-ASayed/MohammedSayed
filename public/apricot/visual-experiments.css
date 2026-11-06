@@ -86,6 +86,11 @@
 .experiment-journey{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:24px}.experiment-journey button:disabled{opacity:.4}
 
 .pinned-fit{fill:none;stroke:#887c6a;stroke-width:2;stroke-dasharray:8 5}
+.fit-advanced>button{display:block;width:100%;margin:12px 0}
+.fit-advanced .experiment-check{margin-top:16px}
+.chart-hint{font-size:12px;line-height:1.7;color:var(--muted);margin:12px 0 0}
+.probe-chart{cursor:crosshair}
+@media(min-width:1000px) and (min-height:850px){.fit-visual{position:sticky;top:24px}}
 
 .optimal-fit{fill:none;stroke:#598043;stroke-width:2.5;stroke-dasharray:2 4}
 

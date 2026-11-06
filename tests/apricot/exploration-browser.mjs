@@ -9,6 +9,14 @@ try{
  await page.goto(base+'#experiments/sampling');assert.match(await page.locator('h1').innerText(),/distribution/);await page.reload();assert.match(await page.locator('h1').innerText(),/distribution/);
  await page.locator('#next-experiment').click();assert.match(page.url(),/experiments\/drift$/);await page.goBack();assert.match(await page.locator('h1').innerText(),/distribution/);await page.goForward();assert.match(await page.locator('h1').innerText(),/Healthy servers/);
  await page.locator('#next-experiment').click();await open();await page.locator('.experiment-glossary summary').click();assert.equal(await page.locator('.experiment-glossary dt').count(),3);
+ assert.equal(await page.locator('#pin-fit').isVisible(),false);
+ const initialLoss=await page.locator('#experiment-metrics strong').first().innerText();
+ const chart=page.locator('.probe-chart');const box=await chart.boundingBox();
+ await chart.click({position:{x:box.width*450/600,y:box.height*150/350}});
+ assert.equal(await page.locator('#fit-probe').inputValue(),'4');assert.equal(await page.locator('.inference-probe').getAttribute('cx'),'450');
+ assert.equal(await page.locator('#experiment-metrics strong').first().innerText(),initialLoss);
+ await page.locator('#fit-probe').focus();await page.keyboard.press('ArrowLeft');assert.equal(await page.locator('#fit-probe').inputValue(),'3.9');
+ await page.getByText('Compare models and inspect errors',{exact:true}).click();
  await page.locator('#pin-fit').click();const pinned=await page.locator('.pinned-fit').getAttribute('d');await page.locator('#fit-run').click();assert.equal(await page.locator('.pinned-fit').getAttribute('d'),pinned);
  const loss=await page.locator('#experiment-metrics strong').first().innerText();await page.locator('#fit-reference').check();assert.equal(await page.locator('.optimal-fit').count(),1);assert.equal(await page.locator('#experiment-metrics strong').first().innerText(),loss);
  await page.getByText('Read the numbers behind the dots',{exact:true}).click();assert.equal(await page.locator('#fit-data-table tbody tr').count(),6);

@@ -46,6 +46,7 @@ export default function Home() {
               <span className="now-label">A little context</span>
               <div><span>Working</span><strong>Senior DevOps Engineer</strong><p>Osprey Flight Solutions</p></div>
               <div><span>Making</span><a href="/apricot">Apricot, my visual AI notebook <ArrowUpRight size={16} /></a></div>
+              <div><span>Building</span><a href="/ai-platform">AI platform projects: gateway, GPUs, RAG evals <ArrowUpRight size={16} /></a></div>
               <div><span>Writing</span><a href={profile.medium} target="_blank" rel="noreferrer">Notes from building things <ArrowUpRight size={16} /></a></div>
             </aside>
 
@@ -121,6 +122,9 @@ export default function Home() {
           </div>
           <a className="all-work" href="/projects">
             Explore all projects <ArrowRight size={17} />
+          </a>
+          <a className="all-work" href="/ai-platform">
+            AI platform projects, with labs and self-tests <ArrowRight size={17} />
           </a>
         </div>
       </section>

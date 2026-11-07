@@ -8,6 +8,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:apricot": "node --test tests/apricot/*.test.mjs",
+    "test:platform": "node --test tests/platform/*.test.mjs",
+    "test:platform:browser": "node tests/platform/browser.mjs",
     "test:apricot:browser": "node tests/apricot/browser.mjs && node tests/apricot/mastery-browser.mjs"
   },
   "dependencies": {

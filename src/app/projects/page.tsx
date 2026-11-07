@@ -18,6 +18,9 @@ export default function ProjectsPage() {
           Open source tools and hands-on platform projects. Explore the code, the
           engineering decisions and the systems behind them.
         </p>
+        <p>
+          <a className="text-link" href="/ai-platform">AI platform projects: LLM gateway, GPU inference and RAG evaluation <ExternalLink size={17} aria-hidden="true" /></a>
+        </p>
       </section>
 
       <section className="project-grid">

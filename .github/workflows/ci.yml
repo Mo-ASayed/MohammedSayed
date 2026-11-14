@@ -62,6 +62,7 @@ jobs:
           node tests/apricot/visual-experiments-browser.mjs
           node tests/apricot/experiment-details-browser.mjs
           node tests/apricot/exploration-browser.mjs
+          node tests/apricot/agent-lab-browser.mjs
 
       - name: Save browser evidence
         if: always()
